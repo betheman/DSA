@@ -1,0 +1,114 @@
+Study plan + must‑know templates (4 weeks, 6 days/week)
+Week 1: Arrays, Hashing, Two Pointers, Sliding Window, Stack
+Day 1 (Arrays/Hashing): Product of Array Except Self, Longest Consecutive Sequence, Majority Element, Missing Number.
+Day 2 (Intervals + Prefix): Merge Intervals, Non-overlapping Intervals, Merge Sorted Array, Set Matrix Zeroes, Subarray Sum Equals K.
+Day 3 (Two Pointers): 3Sum, Container With Most Water, Trapping Rain Water, Backspace String Compare, Remove K Digits.
+Day 4 (Sliding Window I): Longest Substring Without Repeating Characters, Permutation in String, Find All Anagrams in a String, Sliding Window Maximum.
+Day 5 (Sliding Window II): Longest Repeating Character Replacement, Minimum Window Substring, Decode Ways, Sort Colors.
+Day 6 (Review/Mocks): Re‑do misses; 1 mock timed set (4 problems mixed).
+Week 2: Linked Lists, Binary Search, Trees (basics), Heaps/Greedy
+Day 1 (Linked List I): Reverse Linked List, Merge Two Sorted Lists, Remove Nth Node From End, Reorder List.
+Day 2 (Linked List II): Add Two Numbers, Linked List Cycle, Linked List Cycle II, Palindrome Linked List, Intersection of Two Linked Lists, Copy List with Random Pointer.
+Day 3 (Binary Search): Binary Search, First Bad Version, Find Peak Element, Search a 2D Matrix, Search in Rotated Sorted Array, Find Minimum in Rotated Sorted Array, Median of Two Sorted Arrays, Koko Eating Bananas.
+Day 4 (Trees I): Invert Binary Tree, Maximum Depth, Balanced Binary Tree, Diameter of Binary Tree, Binary Tree Level Order Traversal, Right Side View.
+Day 5 (Heaps/Greedy/Intervals): Kth Largest Element, Task Scheduler, Car Fleet, Largest Rectangle in Histogram, Merge K Sorted Lists, Find Median from Data Stream.
+Day 6 (Review/Mocks): Mixed set; revisit weak topics.
+Week 3: Graphs, Union-Find, Backtracking, Tries, Matrix BFS
+Day 1 (Graphs BFS/DFS): Number of Islands, Clone Graph, Rotting Oranges, Pacific Atlantic Water Flow.
+Day 2 (Topo/Ordering): Course Schedule, Alien Dictionary, Graph Valid Tree, Redundant Connection, Network Delay Time, Accounts Merge.
+Day 3 (Union-Find): Graph Valid Tree, Redundant Connection, Accounts Merge, Number of Islands (UF variant).
+Day 4 (Backtracking): Generate Parentheses, Permutations, Subsets, Combination Sum, Word Search (if in your pool), Word Break.
+Day 5 (Trie/Strings): Implement Trie, Add and Search Word, Top K Frequent Words, Encode/Decode Strings.
+Day 6 (Review/Mocks): 1 full mock; re‑do 3 hardest.
+Week 4: Dynamic Programming, Advanced Trees, Mixed Review
+Day 1 (1D DP): Climbing Stairs, House Robber, House Robber II, Maximum Subarray, Maximum Product Subarray.
+Day 2 (Knapsack/Coins): Coin Change, Coin Change II (if in pool), Decode Ways (DP view), Word Break (DP view), Unique Paths.
+Day 3 (LIS/Greedy DP): Longest Increasing Subsequence, Russian Doll Envelopes (if in pool), Partition Equal Subset Sum (if in pool).
+Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest in BST, Validate BST, LCA, Build Tree from Preorder+Inorder, Serialize/Deserialize.
+Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Median of Two Sorted Arrays, Task Scheduler, Word Ladder.
+Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
+
+
+E:
+Two Sum, Contains Duplicate, Valid Anagram, 
+
+M:
+
+/**
+ * @param {string[]} strs
+ * @return {string[][]}
+ */
+var groupAnagrams = function (strs) {
+
+
+    let map = new Map();
+
+    for (let str of strs) {
+        let counts = new Array(26).fill(0);
+
+        for (let char of str) {
+
+            let alpha = char.charCodeAt(0) - 97;
+            ++counts[alpha];
+        }
+
+        counts = counts.join(',');
+
+        if (!map.has(counts)) {
+            map.set(counts, []);
+        }
+        map.get(counts).push(str);
+    }
+
+    return Array.from(map.values());
+};
+
+//111000// ElevenOn1
+//111000// OneEleven
+
+
+
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function (nums, k) {
+
+    let frequency = new Map();
+    for (let num of nums) {
+
+        if (!frequency.has(num)) {
+            frequency.set(num, 0);
+        }
+        frequency.set(num, frequency.get(num) + 1);
+    }
+
+
+
+    let buckets = new Array(nums.length + 1).fill(null).map(() => []);
+
+    for (let [key, value] of frequency.entries()) {
+        buckets[value].push(key);
+    }
+
+    let ans = [];
+
+    for (let i = buckets.length - 1; i >= 0 && ans.length < k; --i) {
+
+        for (let num of buckets[i]) {
+
+            if (ans.length >= k) {
+                break;
+            }
+            ans.push(num);
+        }
+    }
+    return ans;
+
+};
+
+
+Hard:
+

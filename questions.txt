@@ -1,0 +1,921 @@
+##DSA
+
+Study plan + must‑know templates (4 weeks, 6 days/week)
+90–120 min/day. Do 3–5 problems/day from the suggested pool. Day 6 each week = review/mocks. Day 7 = rest.
+Week 1: Arrays, Hashing, Two Pointers, Sliding Window, Stack
+Day 1 (Arrays/Hashing): Pick 3–5 from: Two Sum, Contains Duplicate, Valid Anagram, Group Anagrams, Top K Frequent Elements, Product of Array Except Self, Longest Consecutive Sequence, Majority Element, Missing Number.
+Day 2 (Intervals + Prefix): Merge Intervals, Non-overlapping Intervals, Merge Sorted Array, Set Matrix Zeroes, Subarray Sum Equals K.
+Day 3 (Two Pointers): 3Sum, Container With Most Water, Trapping Rain Water, Backspace String Compare, Remove K Digits.
+Day 4 (Sliding Window I): Longest Substring Without Repeating Characters, Permutation in String, Find All Anagrams in a String, Sliding Window Maximum.
+Day 5 (Sliding Window II): Longest Repeating Character Replacement, Minimum Window Substring, Decode Ways, Sort Colors.
+Day 6 (Review/Mocks): Re‑do misses; 1 mock timed set (4 problems mixed).
+Week 2: Linked Lists, Binary Search, Trees (basics), Heaps/Greedy
+Day 1 (Linked List I): Reverse Linked List, Merge Two Sorted Lists, Remove Nth Node From End, Reorder List.
+Day 2 (Linked List II): Add Two Numbers, Linked List Cycle, Linked List Cycle II, Palindrome Linked List, Intersection of Two Linked Lists, Copy List with Random Pointer.
+Day 3 (Binary Search): Binary Search, First Bad Version, Find Peak Element, Search a 2D Matrix, Search in Rotated Sorted Array, Find Minimum in Rotated Sorted Array, Median of Two Sorted Arrays, Koko Eating Bananas.
+Day 4 (Trees I): Invert Binary Tree, Maximum Depth, Balanced Binary Tree, Diameter of Binary Tree, Binary Tree Level Order Traversal, Right Side View.
+Day 5 (Heaps/Greedy/Intervals): Kth Largest Element, Task Scheduler, Car Fleet, Largest Rectangle in Histogram, Merge K Sorted Lists, Find Median from Data Stream.
+Day 6 (Review/Mocks): Mixed set; revisit weak topics.
+Week 3: Graphs, Union-Find, Backtracking, Tries, Matrix BFS
+Day 1 (Graphs BFS/DFS): Number of Islands, Clone Graph, Rotting Oranges, Pacific Atlantic Water Flow.
+Day 2 (Topo/Ordering): Course Schedule, Alien Dictionary, Graph Valid Tree, Redundant Connection, Network Delay Time, Accounts Merge.
+Day 3 (Union-Find): Graph Valid Tree, Redundant Connection, Accounts Merge, Number of Islands (UF variant).
+Day 4 (Backtracking): Generate Parentheses, Permutations, Subsets, Combination Sum, Word Search (if in your pool), Word Break.
+Day 5 (Trie/Strings): Implement Trie, Add and Search Word, Top K Frequent Words, Encode/Decode Strings.
+Day 6 (Review/Mocks): 1 full mock; re‑do 3 hardest.
+Week 4: Dynamic Programming, Advanced Trees, Mixed Review
+Day 1 (1D DP): Climbing Stairs, House Robber, House Robber II, Maximum Subarray, Maximum Product Subarray.
+Day 2 (Knapsack/Coins): Coin Change, Coin Change II (if in pool), Decode Ways (DP view), Word Break (DP view), Unique Paths.
+Day 3 (LIS/Greedy DP): Longest Increasing Subsequence, Russian Doll Envelopes (if in pool), Partition Equal Subset Sum (if in pool).
+Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest in BST, Validate BST, LCA, Build Tree from Preorder+Inorder, Serialize/Deserialize.
+Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Median of Two Sorted Arrays, Task Scheduler, Word Ladder.
+Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
+
+
+
+
+JavaScript functions:
+
+char.charCodeAt(0) - 97;
+String.fromCharCode(97)
+Array.from(map.keys())
+Array.from(map.values())
+Array.from(x.entries()) [[key,value]]
+
+
+Child process
+[
+exec:
+shell usage: Yes
+usecase: if need to run some shell commands.
+output: export complete output in one go.
+good for: short running process generating less output.
+
+
+execFile:
+
+shell usage: No
+usecase: if need to run some binary directly and not need shell.
+output: export complete output in one go.
+good for: short running process generating less output.
+
+
+spawn:
+shell usage: No
+usecase: if need to run some command/scipt that generates huge output.
+output: export output in stream.
+good for: long running process generating large output.
+
+fork:
+shell usage: No
+usecase: if need to run some node scipt and need communication between running proceses.
+output: stream is optional.
+good for: long running process generating large output.
+
+]
+
+Event loop
+[
+    main thread,
+    4 threa in thread pool  created using libvu library,
+    http call, db handled using os threds
+    process.next and promise push in microtaks queue
+    priority process.next>promise>timer.
+    After every phase completes microtask queue executed.
+    Timer->microtaks->Poll->microtaks->check->microtaks
+
+    Timer: callback(settimeout,setInterval)
+    Poll : callback(file read complete,network call complete)
+    check : callback(setImmediate)
+
+    Main thread executes timer and pending callback and then poll phase callback
+    Then wait in poll phase and keep checking if any I/O callback ready to execute.
+    If there is no i/o callback then check for setImmediate and execute setImmediate.
+    If there is not setImmediate then check for timer and move to timer phase.
+    If there is no timer then wait in poll phase.
+
+┌─────────────────────────────┐
+│          Timers            │ ← setTimeout, setInterval
+└────────────┬────────────────┘
+             ↓
+┌─────────────────────────────┐
+│     Pending Callbacks       │ ← Some system-level callbacks (e.g. TCP errors)
+└────────────┬────────────────┘
+             ↓
+┌─────────────────────────────┐
+│           Poll              │ ← Waits for I/O, runs fs.readFile, net, etc.
+└────────────┬────────────────┘
+             ↓
+┌─────────────────────────────┐
+│           Check             │ ← setImmediate()
+└────────────┬────────────────┘
+             ↓
+┌─────────────────────────────┐
+│      Close Callbacks        │ ← socket.on('close'), etc.
+└─────────────────────────────┘
+
+🔁 After each phase, the microtask queue (e.g., Promises, `process.nextTick()`) runs.
+
+]
+
+
+closure
+[
+🔑 Closure Definition (Simple & Clear):
+A closure in JavaScript is:
+
+A function that remembers the variables from its outer scope, even after the outer function has finished executing.
+
+🧠 In Simpler Words:
+A closure is when a function takes a snapshot of its surroundings and keeps that memory, so it can use it later — even if those surroundings are gone.
+
+🔁 Key Points:
+Created when a function is defined inside another function.
+
+The inner function can access variables of the outer function.
+
+The memory of those variables is preserved, not lost.
+]
+
+call, apply, bind
+[
+
+🔁 What is Function Borrowing?
+Function borrowing means using a method from one object in the context of another object.
+
+For example, if one object has a method, another object can "borrow" that method using call, apply, or bind.
+
+👇 The Setup Example:
+javascript
+Copy
+Edit
+const person1 = {
+  name: "Arif",
+  greet: function(city, country) {
+    console.log(`Hello, I am ${this.name} from ${city}, ${country}`);
+  }
+};
+
+const person2 = {
+  name: "Sana"
+};
+Now person2 has no greet method. Let's borrow it.
+
+🔹 call(): calls the function immediately
+javascript
+Copy
+Edit
+person1.greet.call(person2, "Delhi", "India");
+// Output: Hello, I am Sana from Delhi, India
+➡ call(thisArg, arg1, arg2, ...)
+Changes this to person2, and calls the function right away.
+
+🔹 apply(): same as call, but takes arguments as an array
+javascript
+Copy
+Edit
+person1.greet.apply(person2, ["Mumbai", "India"]);
+// Output: Hello, I am Sana from Mumbai, India
+➡ apply(thisArg, [arg1, arg2, ...])
+Useful when you have arguments in array format.
+
+🔹 bind(): returns a new function, doesn’t call it immediately
+javascript
+Copy
+Edit
+const greetSana = person1.greet.bind(person2, "Lucknow", "India");
+greetSana();  // Output: Hello, I am Sana from Lucknow, India
+➡ bind(thisArg, arg1, arg2, ...)
+Returns a copy of the function with this set to person2.
+
+]
+
+worker and cluster:
+[
+  🧠 Why do we need them?
+Node.js is single-threaded (by default) and best at I/O operations.
+But if you run CPU-intensive code, it blocks the main thread.
+
+So to run things in parallel, Node.js provides:
+
+worker_threads (for real multi-threading)
+
+cluster (for multi-process scaling)
+
+🛠️ worker_threads (Multithreading)
+Introduced in Node.js 10.5+, this allows you to run JavaScript in parallel threads.
+
+✅ Use When:
+You have CPU-bound tasks (e.g., parsing, image processing)
+
+You want to offload work without blocking the main thread
+
+🧪 Example:
+js
+Copy
+Edit
+// main.js
+const { Worker } = require('worker_threads');
+
+const worker = new Worker('./worker-task.js');
+
+worker.on('message', (msg) => {
+  console.log('Result from worker:', msg);
+});
+
+worker.postMessage(42);
+js
+Copy
+Edit
+// worker-task.js
+const { parentPort } = require('worker_threads');
+
+parentPort.on('message', (num) => {
+  let result = num * 2;  // heavy task
+  parentPort.postMessage(result);
+});
+✅ The main thread remains responsive, while the worker does the job.
+
+🔀 cluster (Multi-process)
+cluster allows Node.js to fork multiple processes, each having its own memory and event loop.
+
+✅ Use When:
+You want to scale a web server to handle more requests
+
+You want to utilize all CPU cores
+
+🧪 Example:
+js
+Copy
+Edit
+const cluster = require('cluster');
+const http = require('http');
+const os = require('os');
+
+if (cluster.isMaster) {
+  const numCPUs = os.cpus().length;
+  console.log(`Master ${process.pid} is running`);
+
+  // Fork workers
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
+  }
+
+  cluster.on('exit', (worker) => {
+    console.log(`Worker ${worker.process.pid} died`);
+  });
+
+} else {
+  http.createServer((req, res) => {
+    res.end(`Handled by worker ${process.pid}`);
+  }).listen(3000);
+
+  console.log(`Worker ${process.pid} started`);
+}
+Each worker shares the same port, but runs in a separate process.
+
+🔍 Key Differences
+Feature	worker_threads	cluster
+Type	Thread (same process)	Process (separate)
+Shared Memory	Yes (via SharedArrayBuffer)	No
+Use Case	CPU-heavy tasks	Scaling web servers
+IPC	Faster (via message port)	Slower (via process IPC)
+Overhead	Lower	Higher
+
+✅ Summary
+Use worker_threads to run heavy JS tasks in parallel inside the same process.
+
+Use cluster to create multiple Node.js processes and distribute load across CPU cores.
+
+Let me know if you want to see:
+
+how to use both together
+
+memory sharing between workers
+
+thread pool implementation
+]
+
+es5 vs es6:
+
+[
+  📜 What is ES5 and ES6?
+Version	Full Name	Released
+ES5	ECMAScript 5	2009
+ES6	ECMAScript 6 (a.k.a. ES2015)	2015
+
+🔍 Key Differences: ES5 vs ES6
+Feature	ES5	ES6 (ES2015)
+✅ Variable Declaration	var	let, const (block scope)
+🔁 Function Syntax	Regular function	Arrow functions (() => {})
+🔄 String Concatenation	'Hello ' + name	Template literals: `Hello ${name}`
+🔢 Default Params	Manual: `x = x	
+🧱 Object Properties	name: name	Shorthand: { name }
+🧩 Destructuring	Not supported	const { a, b } = obj
+🧰 Classes	Functions + prototype	Native class and extends
+📦 Modules	Not supported (used require())	import / export syntax
+⏳ Promises	Not available	Introduced for async operations
+🧠 Arrow Functions	Not available	const fn = () => {}
+🌀 Spread/Rest	Not supported	...args, ...arr
+🔗 this binding	Can be tricky in callbacks	Arrow functions inherit this
+🔠 For...of loop	Not available	for (const item of array)
+🎯 Map/Set	Not available	Introduced in ES6
+]
+
+
+
+
+SOLID principles:
+[
+  Sure! Let’s explain the SOLID principles in very simple words — these are 5 rules that help you write clean, maintainable, and scalable code in object-oriented programming (and they apply to JavaScript too!).
+
+🔠 SOLID stands for:
+Letter	Principle Name	In Simple Words
+S	Single Responsibility Principle	One class/function should do only one job.
+O	Open/Closed Principle	Code should be open for extension, but closed for modification.
+L	Liskov Substitution Principle	Subclasses should work like their parent class.
+I	Interface Segregation Principle	Don’t force a class to implement things it doesn’t need.
+D	Dependency Inversion Principle	Depend on abstractions, not concrete things.
+
+🧠 Let’s break them down with examples in plain English:
+1️⃣ Single Responsibility Principle (SRP)
+One class = one responsibility
+
+🚫 Bad:
+
+js
+Copy
+Edit
+class User {
+  saveToDB() {}
+  sendWelcomeEmail() {}
+}
+✅ Good:
+Separate the concerns:
+
+js
+Copy
+Edit
+class UserRepository {
+  saveToDB() {}
+}
+class EmailService {
+  sendWelcomeEmail() {}
+}
+2️⃣ Open/Closed Principle (OCP)
+You can add new things, but don’t change old code
+
+🚫 Bad:
+
+js
+Copy
+Edit
+function discount(type, price) {
+  if (type === 'silver') return price * 0.9;
+  if (type === 'gold') return price * 0.8;
+}
+✅ Good:
+
+js
+Copy
+Edit
+class SilverDiscount {
+  apply(price) { return price * 0.9; }
+}
+class GoldDiscount {
+  apply(price) { return price * 0.8; }
+}
+Now, just add new classes, no need to touch the original function.
+
+3️⃣ Liskov Substitution Principle (LSP)
+A subclass should replace the parent without breaking anything
+
+🚫 Bad:
+
+js
+Copy
+Edit
+class Bird {
+  fly() {}
+}
+class Ostrich extends Bird {
+  fly() { throw "I can't fly"; }
+}
+✅ Good:
+
+js
+Copy
+Edit
+class Bird {}
+class FlyingBird extends Bird {
+  fly() {}
+}
+class Ostrich extends Bird {}
+class Sparrow extends FlyingBird {}
+Now Ostrich doesn’t pretend to fly!
+
+4️⃣ Interface Segregation Principle (ISP)
+Don't force something to implement what it doesn't use
+
+🚫 Bad (in JavaScript, think of objects/classes):
+
+js
+Copy
+Edit
+class Printer {
+  print() {}
+  fax() {}
+  scan() {}
+}
+
+class SimplePrinter extends Printer {
+  fax() { throw "Not supported"; }
+  scan() { throw "Not supported"; }
+}
+✅ Good:
+Split responsibilities:
+
+js
+Copy
+Edit
+class Printer {
+  print() {}
+}
+class Scanner {
+  scan() {}
+}
+5️⃣ Dependency Inversion Principle (DIP):
+
+Dependency Inversion Principle means that high-level modules (like business logic) should not depend on low-level modules (like a database).
+
+Instead, both should depend on abstractions, like interfaces or contracts.
+
+🧠 Simple Example to Tell:
+For example, instead of hardcoding a specific database class inside my service,
+I inject the database as a dependency.
+
+That way, I can easily swap MySQL with MongoDB, or even a mock database during testing.
+
+🚫 Bad:
+
+js
+Copy
+Edit
+class MyApp {
+  constructor() {
+    this.mysql = new MySQLDatabase(); // tightly coupled
+  }
+}
+✅ Good:
+
+js
+Copy
+Edit
+class MyApp {
+  constructor(database) {
+    this.database = database; // decoupled
+  }
+}
+Now you can pass MySQLDatabase, MongoDB, etc., and switch easily.
+
+✅ In Short:
+Principle	Think Like This
+SRP	Do one thing well
+OCP	Add, don't modify
+LSP	Be replaceable
+ISP	Keep it small and focused
+DIP	Depend on contracts, not details
+]
+
+
+
+
+
+Unit testing:
+[
+  mocha, chai, supertest, mongodb-memory-server
+
+Code coverage: nyc(istanbul)
+File       | % Stmts | % Branch | % Funcs | % Lines | Uncovered Line #s
+
+
+% Stmts (Statements Coverage) → Every individual statement must execute.
+% Branch (Branch Coverage) → Every if, else, ternary (? :), and switch case must be tested.
+% Funcs (Functions Coverage) → Every function must be called at least once.
+% Lines (Lines Coverage) → Every line must be executed at least once.
+]
+
+
+SQL vs NoSQL Quick Comparison:
+[
+  Schema:
+
+id	name	category	brand	price	screen_size	color	author	battery_life
+1	Laptop	Electronics	Dell	50000	15.6"	NULL	NULL	NULL
+2	Shoes	Fashion	Nike	4000	NULL	Black	NULL	NULL
+3	Book	Books	NA	500	NULL	NULL	J.K. Rowling	NULL
+
+
+1️⃣ Schema
+SQL (Relational): Fixed schema (structured), requires predefined table structure.
+NoSQL (Non-Relational): Flexible schema (unstructured), allows dynamic fields and data models.
+2️⃣ Scaling
+SQL: Vertical scaling (scale-up by adding more CPU, RAM, SSD to a single server).
+NoSQL: Horizontal scaling (scale-out by adding more servers/nodes to distribute load).
+3️⃣ Data Model
+SQL: Uses tables with rows & columns (relational model).
+NoSQL: Supports JSON, key-value, document, and graph-based data storage.
+4️⃣ ACID Transactions
+SQL: Strong ACID compliance (ensures atomicity, consistency, isolation, durability).
+NoSQL: Eventual consistency (some NoSQL databases sacrifice strict ACID for performance).
+5️⃣ Use Cases
+SQL: Best for applications requiring structured data, such as Banking, ERP, CRM.
+NoSQL: Ideal for handling large-scale, unstructured data in Big Data, IoT, Real-time applications.
+6️⃣ Query Language
+SQL: Uses SQL (Structured Query Language) for data manipulation.
+NoSQL: Varies by database type (e.g., MongoDB uses JSON-like queries, Cassandra uses CQL).
+]
+
+
+Communication protocol:
+[
+
+HTTP:
+
+Ideal for traditional web browsing, APIs, and file downloads.
+Communication is client-server and stateless.
+WebSockets:
+
+Perfect for real-time communication like live chats, live data feeds, or gaming.
+Requires low-latency, bidirectional, and persistent connections.
+P2P Communication:
+
+Best for direct communication between devices, without a central server.
+Commonly used for file sharing or real-time video calling (e.g., WebRTC).
+Protocol Use:
+
+HTTP and WebSockets both use TCP to ensure reliable and ordered communication.
+P2P Communication can use TCP (for reliability) or UDP (for low-latency), depending on the application's requirements.
+
+]
+
+
+CAP Theorem
+[
+CAP Theorem applies to distributed systems, such as distributed databases.
+CAP Theorem states that a distributed system can only guarantee two out of three of the following properties at any time:
+Consistency (C)
+Availability (A)
+Partition Tolerance (P)
+Key Properties of CAP Theorem
+Consistency (C):
+
+Every read returns the most recent write (all nodes see the same data).
+Guarantees data uniformity across all nodes at any given time.
+Availability (A):
+
+Every request (read or write) gets a response, whether successful or not.
+Ensures the system remains operational and responsive, even if some nodes are unavailable.
+Partition Tolerance (P):
+
+The system continues to function even if a network partition occurs (when some nodes cannot communicate).
+Ensures the system can tolerate network failures and keep running.
+
+CAP Theorem Trade-offs
+CA (Consistency & Availability):
+
+The system guarantees consistency and availability, but no partition tolerance.
+If a network partition occurs, the system will stop responding to ensure data consistency.
+Example: Single-node databases like MySQL.
+CP (Consistency & Partition Tolerance):
+
+The system guarantees consistency and partition tolerance, but may sacrifice availability.
+If a partition occurs, the system may refuse requests to maintain data consistency.
+Example: HBase, Zookeeper.
+AP (Availability & Partition Tolerance):
+
+The system guarantees availability and partition tolerance, but sacrifices consistency.
+Data may become temporarily inconsistent across nodes, but the system remains available.
+Example: Cassandra, Couchbase.
+Key Takeaways
+Partition Tolerance (P) is generally always required because network partitions are inevitable.
+A distributed system can’t guarantee all three (C, A, P) simultaneously.
+Based on the needs of the application, the system will choose which properties to prioritize.
+Example Scenarios:
+Consistency & Availability (CA): Suitable for single-node databases or systems with no network partitions.
+Consistency & Partition Tolerance (CP): Ideal for strong consistency requirements (e.g., financial systems) where partitioning must be minimized.
+Availability & Partition Tolerance (AP): Best for applications requiring high availability in distributed environments, like social media, where eventual consistency is acceptable.
+
+
+
+]
+
+
+Design Pattern:
+
+Saga Pattern
+Distributed transactions across microservices.
+Choreography or Orchestration: Coordinating the sequence of service calls.
+Uses compensating transactions to undo steps if something fails.
+Ensures data consistency across services without blocking.
+
+Strangler Pattern
+Gradual migration from an old system to a new system.
+Old and new systems operate side by side during transition.
+New functionality is implemented in the new system, while the old system is gradually replaced.
+Minimizes risk and allows continuous operation during the migration.
+
+CQRS (Command Query Responsibility Segregation)
+Separates read (query) and write (command) operations.
+Write Model handles commands and maintains data consistency.
+Read Model optimized for fast queries (often using caching or denormalization).
+Improves scalability by allowing independent scaling of the read and write sides.
+
+
+
+Two Phases of 2PC:
+Phase 1: Prepare Phase (Voting Phase)
+The coordinator sends a "prepare" request to all participant nodes (or resource managers).
+Each participant evaluates whether it can commit the transaction:
+If all participants can commit, they respond with a "yes".
+If any participant cannot commit (due to an error, conflict, or failure), it responds with a "no".
+Phase 2: Commit or Abort Phase
+If all participants reply "yes":
+The coordinator sends a commit message to all participants, instructing them to commit the transaction.
+Each participant then commits the transaction and acknowledges it.
+If any participant replies "no":
+The coordinator sends an abort message to all participants, instructing them to roll back the transaction.
+Each participant then rolls back any changes made during the transaction and acknowledges it.
+
+
+
+Advantages of EKS for High Load:
+No Time Limit: Unlike Lambda, EKS has no timeout, so your jobs can run indefinitely.
+Horizontal Scaling: EKS can scale pods horizontally to handle high loads, and you can configure autoscaling based on metrics like CPU, memory, or custom metrics.
+Control over Resources: You can define the size and resource allocation for each pod, including the ability to manage CPU, memory, and storage to handle high resource usage.
+
+
+
+
+RabbitMQ Architecture Overview:
+[
+  Producer:
+
+The component or service that sends messages to RabbitMQ. Producers interact with the exchange, which determines where to send the message.
+Exchange:
+
+The component that receives messages from producers and routes them to appropriate queues based on rules.
+Queue:
+
+The buffer that stores messages before they are consumed. The queue is where the message is held until a consumer retrieves it.
+Consumer:
+
+The component that retrieves and processes messages from a queue. A consumer subscribes to the queue and gets messages as they arrive.
+Binding:
+
+A binding connects an exchange to a queue. It determines how messages are routed from the exchange to the queues.
+
+
+
+RabbitMQ:
+
+Disadvantages of RabbitMQ
+Performance issues under high load – RabbitMQ slows down when handling very large message volumes.
+High memory usage – Messages are stored in RAM unless explicitly configured to use disk.
+ACK overhead – Each message requires an acknowledgment, increasing processing time.
+Increased latency – Producer → Exchange → Queue routing adds extra processing time.
+Lower throughput than Kafka – Typically handles thousands of messages per second, whereas Kafka handles millions.
+Message persistence is not default – Messages can be lost if durability settings are not enabled.
+No built-in message replay – Once a message is consumed and acknowledged, it cannot be retrieved.
+Cluster limitation – A single queue resides on one node, creating potential bottlenecks.
+
+]
+
+
+
+Kafka:
+[
+  🧠 Kafka Architecture
+Kafka Cluster consists of multiple brokers.
+
+A topic is split into partitions, which are spread across brokers.
+
+Each partition is managed by one leader broker, with follower replicas for redundancy.
+
+Producers send data to partition leaders; consumers read from them.
+
+👑 Leader in Kafka
+A leader is the main broker for a partition.
+
+It handles all reads and writes for that partition.
+
+Other brokers are followers that replicate the leader’s data.
+
+If a leader fails, a new leader is elected from followers.
+
+🧭 ZooKeeper in Kafka
+ZooKeeper acts as Kafka’s cluster coordinator.
+| Role | What It Does |
+|----------------------|------------------------------------------------------------|
+| 🔐 Broker Registration | Tracks which brokers are up/down |
+| 👑 Leader Election | Chooses the leader for each partition |
+| 🛠️ Cluster Metadata | Maintains broker-partition mapping |
+| 🔁 Fault Tolerance | Detects failures and triggers rebalancing |
+
+🧵 Partitions and Messages
+Partitions of the same topic are stored across different brokers.
+
+Each partition holds a different set of messages.
+
+Kafka preserves message order within a partition, not across partitions.
+]
+
+Kafka vs RabbitMQ:
+[
+
+Kafka
+Producer sends 1 million messages per second
+
+Consumer is reading only 500K messages/sec
+
+Result:
+
+Messages still accumulate in Kafka log
+
+No backpressure to producer or broker
+
+Consumer can catch up later
+
+RabbitMQ
+Same setup: producer sends 1M/sec, consumer reads 500K/sec
+
+Result:
+
+Queue grows
+
+Memory spikes → disk I/O increases
+
+Broker performance drops → may crash if queue is too large
+
+💡 Why Kafka Can Do This
+Kafka leverages:
+
+Sequential disk writes → super fast and efficient
+
+Zero-copy file transfer → sends log data directly from disk to network
+
+Offset tracking per consumer group → lets consumers resume at any point
+
+📌 Summary (for interviews):
+In Kafka, data is written once to a persistent log and consumers read independently.
+This means the broker doesn't need to track consumer speed or hold data in memory.
+Even if consumers are slow or go offline, Kafka is unaffected — that’s a major reason it's preferred for high-throughput systems.
+
+
+
+RabbitMQ is better for low message volume because:
+
+It immediately delivers messages to consumers (push-based).
+Kafka requires consumers to poll for messages, adding unnecessary complexity.
+Kafka’s log-based design is optimized for high-throughput, not for handling just a few messages efficiently.
+
+rabbitmq keep messages in ram and kafka write in file so rabbitmq is faster.
+if meesage take more time to process let say 1 min then kafka is slow because from same partition only one consumer can connect but in can case rabbitmq multiple consumebrs can connect.
+
+Let say you neet to process 20 message/sec  and each message is taking 1 sec to process by consumer 
+then in rabbitmq you can increase consumer count to 20 but in kafka you need 20 partition 
+now this will might slow kafka as partition increase on kafka server but we can scale consumers in RabbitMQ as it is independent of rabbitmq server.
+Also you need 20 partition + 20 consumer in kafka but in rabbitmq you need only 20 consumers.
+]
+
+
+
+
+
+
+AWS Lambda:
+
+
+Template.yaml:
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Resources:
+  MyLambdaFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: MyLambda
+      Handler: app.lambdaHandler
+      Runtime: nodejs20.x
+      CodeUri: .
+      MemorySize: 128
+      Timeout: 10
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /hello
+            Method: GET
+
+Key Sections:
+
+Resources: Defines AWS resources (Lambda, API Gateway, IAM).
+FunctionName: Name of the Lambda function.
+Handler: Entry point of the function.
+Runtime: Environment (e.g., Node.js 20.x).
+Events: Triggers (API Gateway in this case).
+
+
+ARN:
+An ARN (Amazon Resource Name) is a unique identifier for AWS resources.
+
+EX: arn:aws:lambda:us-east-1:123456789012:function:MyLambda
+Format: arn:aws:<service>:<region>:<account-id>:<resource-type>:<resource-name>
+
+
+Rate limit:
+
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+
+Resources:
+  GetUserFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: getUser
+      Handler: app.getUserHandler
+      Runtime: nodejs18.x
+      Policies:
+        - AWSLambdaBasicExecutionRole
+      Events:
+        GetUserAPI:
+          Type: Api
+          Properties:
+            Path: /user
+            Method: GET
+            RestApiId: !Ref MyApi
+
+  MyApi:
+    Type: AWS::Serverless::Api
+    Properties:
+      StageName: Prod
+      DefinitionBody:
+        openapi: "3.0.1"
+        info:
+          title: "User API"
+          version: "1.0"
+        paths:
+          /user:
+            get:
+              x-amazon-apigateway-integration:
+                uri: !Sub
+                  - "arn:aws:apigateway:${AWS::Region}:lambda:path/2015-03-31/functions/${GetUserFunction.Arn}/invocations"
+                  - { AWS::Region: !Ref "AWS::Region" }
+                httpMethod: POST
+                type: aws_proxy
+              x-amazon-apigateway-throttling:
+                rateLimit: 50   # 50 requests per second
+                burstLimit: 100  # Allows short bursts up to 100 requests
+
+Outputs:
+  GetUserAPI:
+    Description: "API Gateway endpoint for GetUser function"
+    Value: !Sub "https://${MyApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/user"
+
+
+
+
+How do you trigger an AWS Lambda function?
+Lambda functions can be triggered by various AWS services, such as:
+
+API Gateway (HTTP requests)
+S3 (file uploads)
+DynamoDB Streams (database changes)
+SQS (message queues)
+CloudWatch Events (scheduled jobs)
+SNS (notifications)
+
+
+What is a Cold Start in AWS Lambda?
+A cold start in AWS Lambda happens when the function is invoked after being idle, 
+requiring AWS to create a new execution environment. 
+This causes a delay in response time.
+
+
+Use Provisioned Concurrency (Best Fix ✅)
+Keeps a pre-warmed instance of your Lambda function always ready.
+Ensures zero cold start for a specific number of requests.
+
+
+Deployment:
+
+Summary of DevOps Deployment Workflow
+Step	Description
+1️⃣ Code Push	Developer pushes code to GitHub/GitLab
+2️⃣ CI/CD Triggered	Pipeline starts deployment
+3️⃣ Install & Test	Install dependencies & run tests
+4️⃣ Build & Package	Package Lambda function for AWS
+5️⃣ Deploy to AWS	Deploy using AWS SAM or AWS CLI
+6️⃣ Verify Deployment	Test API Gateway & check logs

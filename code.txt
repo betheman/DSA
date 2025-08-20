@@ -110,5 +110,71 @@ var topKFrequent = function (nums, k) {
 };
 
 
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var productExceptSelf = function (nums) {
+
+    let ans = new Array(nums.length).fill(0);
+
+    let prefix = 1;
+
+    for (let i = 0; i < nums.length; i++) {
+
+        ans[i] = prefix;
+        prefix *= nums[i];
+
+    }
+
+    let suffix = 1;
+
+    for (let i = nums.length - 1; i >= 0; i--) {
+
+        ans[i] *= suffix;
+        suffix *= nums[i];
+
+    }
+
+    return ans;
+
+};
+
+
+Longest Consecutive Sequence:
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var longestConsecutive = function (nums) {
+
+    if (nums.length == 0) {
+        return 0;
+    }
+
+
+    let uniqueNums = new Set(nums);
+    let max = -Infinity;
+
+    for (let num of uniqueNums) {
+
+        if (uniqueNums.has(num - 1)) {
+            continue;
+        }
+
+        let count = 0;
+
+        while (uniqueNums.has(num)) {
+
+            ++count;
+            ++num;
+        }
+        max = Math.max(max, count);
+    }
+    return max;
+};
+
+
 Hard:
 

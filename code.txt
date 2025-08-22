@@ -176,5 +176,126 @@ var longestConsecutive = function (nums) {
 };
 
 
-Hard:
+Majority Element:
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var majorityElement = function (nums) {
+
+    let count = 0;
+    let c = '';
+
+    for (let num of nums) {
+
+        if (count == 0 || c == num) {
+            c = num;
+            ++count
+        } else {
+            --count;
+        }
+    }
+    return c;
+};
+
+
+Majority Element 2:
+
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+
+var majorityElement = function (nums) {
+
+
+    let e1 = null;
+    let e2 = null;
+    let count1 = 0;
+    let count2 = 0;
+
+    for (let n of nums) {
+
+
+        if (e1 === n) {
+            ++count1;
+        }
+
+        else if (e2 === n) {
+            ++count2;
+        }
+
+        else if (count1 == 0) {
+            e1 = n;
+            count1 = 1;
+        }
+        else if (count2 == 0) {
+            e2 = n;
+            count2 = 1;
+        }
+        else {
+
+            --count1;
+            --count2;
+
+        }
+    }
+
+    console.log(e1, e2);
+
+    count1 = 0;
+    count2 = 0;
+    for (let num of nums) {
+        if (num === e1) count1++;
+        else if (num === e2) count2++;
+    }
+
+
+
+
+    let c = Math.floor(nums.length / 3);
+    let ans = [];
+
+    if (count1 > c) {
+        ans.push(e1);
+    }
+
+    if (count2 > c) {
+        ans.push(e2);
+    }
+
+    return ans;
+
+};
+
+
+
+Missing Number:
+
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var missingNumber = function(nums) {
+    let n = nums.length;
+    let expectedSum = (n * (n + 1)) / 2;
+    let actualSum = nums.reduce((a, b) => a + b, 0);
+    return expectedSum - actualSum;
+};
+
+
+var missingNumber = function(nums) {
+    let n = nums.length;
+    let xor = 0;
+
+    for (let i = 0; i <= n; i++) {
+        xor ^= i;
+    }
+    for (let num of nums) {
+        xor ^= num;
+    }
+    return xor;
+};
 

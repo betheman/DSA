@@ -332,3 +332,68 @@ var eraseOverlapIntervals = function (intervals) {
     return count;
 };
 
+
+
+/**
+ * @param {number[][]} matrix
+ * @return {void} Do not return anything, modify matrix in-place instead.
+ */
+var setZeroes = function (matrix) {
+
+    let rc = matrix.length;
+    let cc = matrix[0].length;
+    let isFirstRowZero = false;
+    let isFirstColZero = false;
+
+    for (let i = 0; i < rc; i++) {
+        if (matrix[i][0] == 0) {
+            isFirstColZero = true;
+            break;
+        }
+    }
+
+    for (let i = 0; i < cc; i++) {
+        if (matrix[0][i] == 0) {
+            isFirstRowZero = true;
+            break;
+        }
+    }
+
+    for (let i = 1; i < rc; i++) {
+
+        for (let j = 1; j < cc; j++) {
+
+            if (matrix[i][j] == 0) {
+                matrix[i][0] = 0;
+                matrix[0][j] = 0;
+            }
+        }
+    }
+
+    for (let i = 1; i < rc; i++) {
+        for (let j = 1; j < cc; j++) {
+            if (matrix[i][0] == 0 || matrix[0][j] == 0) {
+                matrix[i][j] = 0;
+            }
+        }
+    }
+
+    if (isFirstColZero) {
+        for (let i = 0; i < rc; i++) {
+            matrix[i][0] = 0
+        }
+
+    }
+
+    if (isFirstRowZero) {
+        for (let i = 0; i < cc; i++) {
+            matrix[0][i] = 0
+        }
+
+    }
+
+
+
+
+}
+

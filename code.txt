@@ -585,6 +585,48 @@ var trap = function (nums) {
 
     return ans;
 
+};
+
+
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+var trap = function (nums) {
+
+
+    let left = 1;
+    let right = nums.length - 2;
+    let ans = 0;
+    let lMax = nums[0];
+    let rMax = nums[nums.length - 1];
+
+    while (left <= right) {
+
+        if (rMax > lMax) {
+
+            let cap = (lMax - nums[left]);
+            lMax = Math.max(lMax, nums[left]);
+            if (cap > 0) {
+                ans += cap;
+            }
+            ++left;
+        }
+        else {
+
+            let cap = (rMax - nums[right]);
+            rMax = Math.max(rMax, nums[right]);
+            if (cap > 0) {
+                ans += cap;
+            }
+            --right;
+        }
+    }
+
+
+
+    return ans;
+
 
 };
 

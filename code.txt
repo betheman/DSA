@@ -545,3 +545,49 @@ var maxArea = function (height) {
 };
 
 
+
+Trapping Rain Water:
+
+Solution:
+
+/**
+ * @param {number[]} height
+ * @return {number}
+ */
+var trap = function (nums) {
+
+
+    let left = new Array(nums.length).fill(0);
+    let right = new Array(nums.length).fill(0);
+    let ans = 0;
+    let i = 0;
+    left[i] = nums[i];;
+
+    for (let i = 1; i < nums.length; i++) {
+        left[i] = Math.max(nums[i], left[i - 1]);
+    }
+    left[0] = -1;
+
+    right[nums.length - 1] = nums[nums.length - 1];
+
+    for (let i = nums.length - 2; i >= 0; --i) {
+        right[i] = Math.max(nums[i], right[i + 1]);
+    }
+
+    right[nums.length - 1] = -1
+
+    for (let i = 0; i < nums.length; i++) {
+        let c = (Math.min(left[i], right[i]) - nums[i]);
+        if (c > 0) {
+            ans += c;
+        }
+    }
+
+    return ans;
+
+
+};
+
+
+
+

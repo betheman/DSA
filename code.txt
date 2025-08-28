@@ -667,3 +667,40 @@ var backspaceCompare = function (s, t) {
 
 
 
+/**
+ * @param {string} num
+ * @param {number} k
+ * @return {string}
+ */
+var removeKdigits = function (num, k) {
+
+
+    let stack = [];
+
+    for (let n of num) {
+
+        while (k > 0 && stack.length > 0 && stack[stack.length - 1] > n) {
+
+            stack.pop();
+            --k;
+        }
+        stack.push(n);
+    }
+
+
+    while (k > 0) {
+        stack.pop();
+        --k;
+    }
+    while (stack[0] == 0) {
+
+        stack.shift();
+
+    }
+
+    return stack.join('') || '0';
+
+
+
+};
+

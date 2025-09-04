@@ -728,3 +728,50 @@ var lengthOfLongestSubstring = function (s) {
     return ans;
 }
 
+
+
+/**
+ * @param {string} s1
+ * @param {string} s2
+ * @return {boolean}
+ */
+var checkInclusion = function (s1, s2) {
+
+    if (s1.length > s2.length) {
+        return false;
+    }
+
+    let char1 = new Array(26).fill(0);
+    let char2 = new Array(26).fill(0);
+
+    let i;
+
+    for (i = 0; i < s1.length; i++) {
+
+        let code1 = s1[i].charCodeAt(0) - 97;
+        let code2 = s2[i].charCodeAt(0) - 97;
+        ++char1[code1];
+        ++char2[code2];
+    }
+
+    char1 = char1.join('');
+
+    if (char1 == char2.join('')) {
+        return true;
+    }
+
+    let j = 0;
+
+    for (i; i < s2.length; i++, j++) {
+
+        let code1 = s2[j].charCodeAt(0) - 97;
+        let code2 = s2[i].charCodeAt(0) - 97;
+        --char2[code1];
+        ++char2[code2];
+
+        if (char1 == char2.join('')) {
+            return true;
+        }
+    }
+    return false;
+};

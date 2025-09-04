@@ -699,8 +699,32 @@ var removeKdigits = function (num, k) {
     }
 
     return stack.join('') || '0';
-
-
-
 };
+
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var lengthOfLongestSubstring = function (s) {
+
+
+    let seen = new Map();
+    let left = 0;
+    let ans = 0;
+
+    for (let right = 0; right < s.length; ++right) {
+
+        let c = s[right];
+
+        if (seen.has(c) && seen.get(c) >= left) {
+            left = seen.get(c) + 1;
+        }
+
+        seen.set(c, right);
+        ans = Math.max(ans, right - left + 1);
+    }
+
+    return ans;
+}
 

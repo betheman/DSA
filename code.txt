@@ -29,10 +29,18 @@ Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Med
 Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
 
 
-E:
-Two Sum, Contains Duplicate, Valid Anagram, 
 
-M:
+
+/**
+
+Anagram: s2 is angram of s1 if s1 chas jumbled. no addtion, subtraction of chars and lenght of s1 == s2.
+
+
+
+**/
+
+
+
 
 /**
  * @param {string[]} strs
@@ -774,4 +782,60 @@ var checkInclusion = function (s1, s2) {
         }
     }
     return false;
+};
+
+
+
+
+/**
+ * @param {string} s
+ * @param {string} p
+ * @return {number[]}
+ */
+var findAnagrams = function (s2, s1) {
+
+    if (s1.length > s2.length) {
+
+        return [];
+    }
+
+    let char1 = new Array(26).fill(0);
+    let char2 = new Array(26).fill(0);
+
+    let ans = [];
+
+    let i;
+
+    for (i = 0; i < s1.length; i++) {
+
+
+        let code1 = s1[i].charCodeAt(0) - 97;
+        let code2 = s2[i].charCodeAt(0) - 97;
+        ++char1[code1];
+        ++char2[code2];
+    }
+
+    char1 = char1.join('');
+
+    if (char1 == char2.join('')) {
+        ans.push(0);
+    }
+
+    let j = 0;
+
+    for (i; i < s2.length; i++) {
+
+        let code1 = s2[j].charCodeAt(0) - 97;
+        let code2 = s2[i].charCodeAt(0) - 97;
+        ++char2[code2];
+        --char2[code1];
+        ++j;
+
+        if (char1 == char2.join('')) {
+            ans.push(j);
+        }
+    }
+
+    return ans;
+
 };

@@ -839,3 +839,43 @@ var findAnagrams = function (s2, s1) {
     return ans;
 
 };
+
+
+
+/**
+ * @param {string} s
+ * @param {number} k
+ * @return {number}
+ */
+var characterReplacement = function (s, k) {
+
+    let left = 0;
+    let right = 0;
+    let ans = -Infinity;
+    let chars = new Array(26).fill(0);
+    let maxF = 0;
+
+    while (right < s.length) {
+
+        let code = s[right].charCodeAt(0) - 65;
+        ++chars[code];
+
+        maxF = Math.max(maxF, chars[code]);
+
+        let length = right - left + 1;
+
+        if (length > (maxF + k)) {
+
+            code = s[left].charCodeAt(0) - 65;
+            --chars[code];
+            ++left;
+        }
+        ans = Math.max(ans, right - left + 1);
+        ++right
+
+    }
+
+    return ans;
+};
+
+

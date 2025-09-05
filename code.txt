@@ -879,3 +879,53 @@ var characterReplacement = function (s, k) {
 };
 
 
+
+Decode Ways:
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var numDecodings = function (s) {
+
+
+    let map = new Map();
+    let cache = new Map();
+
+    for (let i = 0; i < 26; i++) {
+        map.set(`${i + 1}`, String.fromCharCode(65 + i));
+    }
+
+    let travel = (i) => {
+
+
+        if (i < 0) {
+            return 1;
+        }
+
+        if (cache.has(i)) {
+            return cache.get(i);
+        }
+
+        let res = 0;
+
+        if (map.has(s[i])) {
+            res = travel(i - 1);
+        }
+
+        if (map.has(s[i - 1] + s[i])) {
+            res += travel(i - 2);
+        }
+
+        cache.set(i, res);
+
+        return res;
+    }
+    return travel(s.length - 1);
+
+};
+
+
+
+
+// 1 1 1 1

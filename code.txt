@@ -957,3 +957,36 @@ var sortColors = function (nums) {
     }
     return nums;
 }
+
+
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var maxSlidingWindow = function (nums, k) {
+
+    let t = [];
+    let ans = [];
+    k = k - 1;
+
+    for (let i = 0; i < nums.length; i++) {
+
+        if (t.length && (i - k) > t[0]) {
+            t.shift();
+        }
+
+        while (t.length && nums[i] >= nums[t[t.length - 1]]) {
+            t.pop();
+        }
+
+        t.push(i);
+
+        if (i >= k) {
+            ans.push(nums[t[0]]);
+        }
+    }
+
+    return ans;
+};

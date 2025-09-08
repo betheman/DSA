@@ -1309,3 +1309,33 @@ var getIntersectionNode = function (headA, headB) {
 };
 
 
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var findPeakElement = function (nums) {
+
+    nums.unshift(-Infinity);
+    nums.push(-Infinity);
+
+    let beg = 1;
+    let end = nums.length - 2;
+
+    while (beg <= end) {
+
+        let mid = Math.floor((beg + end) / 2);
+
+        if (nums[mid] > nums[mid - 1] && nums[mid] > nums[mid + 1]) {
+            return mid - 1;
+        }
+
+        if (nums[mid + 1] > nums[mid]) {
+            beg = mid + 1;
+        }
+        else {
+            end = mid - 1;
+        }
+    }
+};
+
+

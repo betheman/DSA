@@ -1216,3 +1216,54 @@ var reorderList = function (head) {
     return head;
 };
 
+
+
+Linked List Cycle II:
+
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val) {
+ *     this.val = val;
+ *     this.next = null;
+ * }
+ */
+
+/**
+ * @param {ListNode} head
+ * @return {boolean}
+ */
+var detectCycle = function (head) {
+
+    let slow = head;
+    let fast = head;
+
+    while (fast && fast.next) {
+        slow = slow.next;
+        fast = fast.next.next;
+
+        if (slow == fast) {
+            slow = head;
+            while (slow != fast) {
+                slow = slow.next;
+                fast = fast.next;
+            }
+            return slow;
+        }
+    }
+    return null;
+};
+
+
+// Sure 👍 here’s the 4-line explanation of the formula L + x = kC:
+
+// Let L = distance from head to cycle start, x = distance from cycle start to meeting point, C = cycle length.
+
+// At meeting, slow has traveled L + x.
+
+// Fast has traveled L + x + kC (same path as slow + k full cycles).
+
+// Since fast moves twice as fast: L + x + kC = 2(L + x) → L + x = kC.
+
+// Would you like me to also give you a one-liner intuition (non-mathy) you can remember easily?
+

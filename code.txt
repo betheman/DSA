@@ -1338,4 +1338,37 @@ var findPeakElement = function (nums) {
     }
 };
 
+/**
+ * @param {number[][]} matrix
+ * @param {number} target
+ * @return {boolean}
+ */
+var searchMatrix = function (matrix, target) {
+
+    let row = matrix.length;
+    let col = matrix[0].length;
+    let beg = 0;
+    let end = row * col - 1;
+
+    while (beg <= end) {
+
+        let mid = (beg + end) >> 1;
+
+        let i = Math.floor(mid / col);
+        let j = mid % col;
+
+        if(matrix[i][j]==target){
+            return true;
+        }
+        else if(matrix[i][j]>target){
+            end=mid-1;
+        }
+        else{
+            beg=mid+1;
+        }
+    }
+    return false;
+
+};
+
 

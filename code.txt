@@ -1372,3 +1372,87 @@ var searchMatrix = function (matrix, target) {
 };
 
 
+Search in Rotated Sorted Array:
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var search = function (nums, target) {
+
+
+    let beg = 0;
+    let end = nums.length - 1;
+
+    while (beg <= end) {
+
+        let mid = (beg + end) >> 1;
+
+        if (nums[mid] == target) {
+            return mid;
+        }
+        else if (nums[mid] >= nums[beg]) {
+
+            if (target >= nums[beg] && target < nums[mid]) {
+
+                end = mid - 1;
+            }
+            else {
+                beg = mid + 1;
+            }
+        }
+        else {
+
+            if (target > nums[mid] && target <= nums[end]) {
+
+                beg = mid + 1;
+            }
+            else {
+                end = mid - 1;
+            }
+        }
+    }
+
+    return -1;
+};
+
+
+Find Minimum in Rotated Sorted Array:
+
+
+/**
+ * @param {number[]} nums
+ * @param {number} target
+ * @return {number}
+ */
+var findMin = function (nums) {
+
+    let beg = 0;
+    let end = nums.length - 1;
+    let min = Infinity;
+
+
+    while (beg <= end) {
+
+        let mid = (beg + end) >> 1;
+
+        if (nums[mid] >= nums[beg]) {
+
+            min = Math.min(min, nums[beg]);
+            beg = mid + 1;
+        }
+        else {
+            min = Math.min(min, nums[end]);
+            end = mid - 1;
+        }
+    }
+
+    return min;
+};
+
+
+
+
+
+

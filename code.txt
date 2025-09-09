@@ -1452,6 +1452,52 @@ var findMin = function (nums) {
 };
 
 
+Koko Eating Bananas:
+
+/**
+ * @param {number[]} piles
+ * @param {number} h
+ * @return {number}
+ */
+var minEatingSpeed = function (piles, h) {
+
+    const canEatAll = (k) => {
+
+        let count = 0;
+
+        for (let pile of piles) {
+
+            count += (Math.ceil(pile / k));
+            if (count > h) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    let left = 0;
+    let right = Math.max(...piles);
+    let ans = Infinity;
+
+    while (left <= right) {
+
+        let mid = (left + right) >> 1;
+
+        if (canEatAll(mid)) {
+
+            ans = Math.min(ans, mid);
+            right = mid - 1;
+        }
+        else {
+            left = mid + 1;
+        }
+    }
+    return ans;
+
+};
+
+
+
 
 
 

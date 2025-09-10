@@ -1497,6 +1497,41 @@ var minEatingSpeed = function (piles, h) {
 };
 
 
+Invert Binary Tree:
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {TreeNode}
+ */
+var invertTree = function (root) {
+
+
+    let travel = (root) => {
+
+        if (!root) {
+            return root;
+        }
+
+        let left = root.left;
+        root.left = root.right;
+        root.right = left;
+
+        travel(root.left);
+        travel(root.right);
+        return root;
+    }
+
+    return travel(root)
+
+};
 
 
 

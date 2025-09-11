@@ -1750,3 +1750,68 @@ var rightSideView = function (root) {
     }
     return ans;
 };
+
+
+//Kth Largest Element
+
+
+var findKthLargest = function (nums, k) {
+
+    const heap = [];
+
+    const build = (i) => {
+
+        heap.push(nums[i]);
+        i = heap.length - 1;
+        let p = Math.floor((i - 1) / 2);
+        while (p >= 0 && heap[i] > heap[p]) {
+            [heap[i], heap[p]] = [heap[p], heap[i]];
+            i = p;
+            p = Math.floor((i - 1) / 2);
+        }
+    }
+
+    const heapifyDown = () => {
+
+        let n = heap.length - 1;
+        [heap[0], heap[n]] = [heap[n], heap[0]];
+        let e = heap.pop();
+
+        let root = 0;
+        let p = 0;
+
+        while (true) {
+
+            let left = 2 * root + 1;
+            let right = 2 * root + 2;
+
+            if (left <= n && heap[left] > heap[p]) {
+                p = left;
+            }
+
+            if (right <= n && heap[right] > heap[p]) {
+                p = right;
+            }
+            if (root == p) {
+                break;
+            }
+
+            [heap[root], heap[p]] = [heap[p], heap[root]];
+            root = p;
+        }
+        return e;
+    }
+
+    for (let i = 0; i < nums.length; i++) {
+        build(i);
+    }
+
+    let ans = -1;
+
+    for (let i = 0; i < k; i++) {
+        ans = heapifyDown();
+    }
+    return ans;
+
+};
+

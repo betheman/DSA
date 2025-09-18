@@ -1849,3 +1849,49 @@ var carFleet = function (target, position, speed) {
 
 
 };
+
+
+//Task Scheduler
+
+/**
+ * @param {character[]} tasks
+ * @param {number} n
+ * @return {number}
+ */
+var leastInterval = function (tasks, n) {
+
+    let map = new Map();
+
+    for (let task of tasks) {
+
+        if (!map.has(task)) {
+            map.set(task, 0);
+        }
+        map.set(task, map.get(task) + 1);
+    }
+
+    let time = 0;
+    let heap = [...map.values()];
+    let cooldown = [];
+
+
+    while (heap.length > 0 || cooldown.length > 0) {
+
+        ++time;
+        heap.sort((a, b) => b - a);
+
+        if (heap.length > 0) {
+
+            let job = heap.shift() - 1;
+            if (job > 0) {
+                cooldown.push([time + n, job]);
+            }
+        }
+        if (cooldown.length > 0 && cooldown[0][0] == time) {
+            heap.push(cooldown[0][1]);
+            cooldown.shift();
+        }
+    }
+    return time;
+
+};

@@ -1815,3 +1815,37 @@ var findKthLargest = function (nums, k) {
 
 };
 
+
+
+carFleet:
+
+/**
+ * @param {number} target
+ * @param {number[]} position
+ * @param {number[]} speed
+ * @return {number}
+ */
+var carFleet = function (target, position, speed) {
+
+
+    let cars = [];
+    let maxTime = 0;
+    let count = 0;
+
+    for (let i = 0; i < position.length; i++) {
+        let time = (target - position[i]) / speed[i];
+        cars.push([position[i], time]);
+    }
+    cars.sort((a, b) => b[0] - a[0]);
+
+    for (let car of cars) {
+
+        if (car[1] > maxTime) {
+            ++count;
+            maxTime = car[1];
+        }
+    }
+    return count;
+
+
+};

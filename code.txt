@@ -1895,3 +1895,71 @@ var leastInterval = function (tasks, n) {
     return time;
 
 };
+
+
+
+//Largest Rectangle in Histogram
+
+/**
+ * @param {number[]} heights
+ * @return {number}
+ */
+var largestRectangleArea = function (heights) {
+
+
+    heights.unshift(-Infinity);
+    heights.push(-Infinity);
+
+    let left = new Array(heights.length).fill(0);
+    let right = new Array(heights.length).fill(0);
+    let stk = [];
+
+    for (let i = 0; i < heights.length - 1; i++) {
+
+        if (stk.length == 0) {
+            stk.push(i);
+            continue;
+        }
+
+        while (stk.length > 0 && heights[stk[stk.length - 1]] >= heights[i]) {
+            stk.pop();
+        }
+
+        left[i] = stk[stk.length - 1];
+
+        stk.push(i);
+    }
+
+    stk = [];
+    for (let i = heights.length - 1; i > 0; i--) {
+
+
+        if (stk.length == 0) {
+            stk.push(i);
+            continue;
+        }
+
+        while (stk.length > 0 && heights[stk[stk.length - 1]] >= heights[i]) {
+            stk.pop();
+        }
+
+        right[i] = stk[stk.length - 1];
+
+
+        stk.push(i);
+    }
+
+    //console.log(left, right);
+
+
+    let max = -Infinity;
+
+    for (let i = 1; i < heights.length - 1; i++) {
+
+        let w = right[i] - left[i] - 1;
+
+        max = Math.max(max, w * heights[i]);
+    }
+    return max;
+
+};

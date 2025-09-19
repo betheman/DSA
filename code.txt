@@ -1963,3 +1963,100 @@ var largestRectangleArea = function (heights) {
     return max;
 
 };
+
+
+
+// merge-k-sorted-lists
+
+
+/**
+ * Definition for singly-linked list.
+ * function ListNode(val, next) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.next = (next===undefined ? null : next)
+ * }
+ */
+/**
+ * @param {ListNode[]} lists
+ * @return {ListNode}
+ */
+var mergeKLists = function (lists) {
+
+    const heap = [];
+    const dummy = new ListNode();
+    let head = dummy;
+
+    const heapifyUp = (e) => {
+        if (!e) {
+            return;
+        }
+
+
+        heap.push(e);
+
+        let n = heap.length - 1;
+        let p = Math.floor((n - 1) / 2);
+        while (p >= 0 && heap[n].val < heap[p].val) {
+            [heap[p], heap[n]] = [heap[n], heap[p]];
+            n = p;
+            p = Math.floor((n - 1) / 2);
+        }
+    }
+
+    const heapifyDown = () => {
+
+        let node = heap[0];
+        let nextNode = node.next;
+        node.next = null;
+
+        if (nextNode) {
+            heap[0] = nextNode;
+        }
+        else {
+            heap[0] = heap[heap.length - 1];
+            heap.pop();
+        }
+
+        let n = heap.length - 1;
+        let parent = 0;
+        let current = 0;
+
+        while (true) {
+
+            let left = 2 * current + 1;
+            let right = 2 * current + 2;
+
+            if (left <= n && heap[left].val < heap[current].val) {
+                current = left;
+            }
+
+            if (right <= n && heap[right].val < heap[current].val) {
+                current = right;
+            }
+
+            if (parent == current) {
+                break;
+            }
+
+            [heap[parent], heap[current]] = [heap[current], heap[parent]];
+
+            parent = current;
+        }
+        return node;
+    }
+
+    for (let list of lists) {
+
+        heapifyUp(list);
+    }
+    //console.log(heap);
+
+    while (heap.length > 0) {
+        head.next = heapifyDown();
+        head = head.next;
+        //console.log(head.val, heap)
+    }
+
+    return dummy.next;
+
+};

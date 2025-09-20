@@ -2237,3 +2237,53 @@ var numIslands = function (grid) {
     return count;
 
 };
+
+
+/**
+ * // Definition for a _Node.
+ * function _Node(val, neighbors) {
+ *    this.val = val === undefined ? 0 : val;
+ *    this.neighbors = neighbors === undefined ? [] : neighbors;
+ * };
+ */
+
+/**
+ * @param {_Node} node
+ * @return {_Node}
+ */
+var cloneGraph = function (node) {
+
+    if (!node) {
+        return node;
+    }
+
+    let nc = new _Node();
+    let vis = new Map();
+
+    console.log(node);
+
+    let travel = (nc, node) => {
+
+        //console.log(nc, node)
+
+        if (vis.has(node.val)) {
+            return vis.get(node.val);
+        }
+
+        vis.set(node.val,nc);
+
+        nc.val = node.val;
+
+        for (let nbr of node.neighbors) {
+
+            let n1 = new _Node();
+            nc.neighbors.push(travel(n1, nbr));
+            
+        }
+        return nc;
+    }
+    let ans=travel(nc, node);
+
+    console.log(ans);
+    return ans;
+};

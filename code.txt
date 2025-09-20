@@ -2193,3 +2193,47 @@ MedianFinder.prototype.findMedian = function () {
  * obj.addNum(num)
  * var param_2 = obj.findMedian()
  */
+
+
+
+//Number of Islands
+
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+var numIslands = function (grid) {
+
+    let rows = grid.length;
+    let cols = grid[0].length;
+
+    let count = 0;
+
+    let travel = (i, j) => {
+
+        if (i < 0 || j < 0 || i >= rows || j >= cols || grid[i][j] == "0") {
+            return;
+        }
+
+        grid[i][j] = "0";
+        travel(i + 1, j);
+        travel(i - 1, j);
+        travel(i, j + 1);
+        travel(i, j - 1);
+
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+
+            if (grid[i][j] == "1") {
+
+                ++count;
+                travel(i, j);
+            }
+        }
+    }
+
+    return count;
+
+};

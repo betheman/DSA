@@ -2060,3 +2060,136 @@ var mergeKLists = function (lists) {
     return dummy.next;
 
 };
+
+
+
+
+//Find Median from Data Stream
+//For every insertion move max from left to right and min from right to left.
+
+let left = [];
+let right = [];
+
+let leftPush = function (num) {
+
+    left.push(num);
+    let n = left.length - 1;
+    let i = Math.floor((n - 1) / 2);
+    while (i >= 0 && left[n] > left[i]) {
+
+        [left[i], left[n]] = [left[n], left[i]];
+        n = i;
+        i = Math.floor((n - 1) / 2);
+    }
+}
+
+let rightPush = function (num) {
+
+    right.push(num);
+    let n = right.length - 1;
+    let i = Math.floor((n - 1) / 2);
+    while (i >= 0 && right[n] < right[i]) {
+
+        [right[i], right[n]] = [right[n], right[i]];
+        n = i;
+        i = Math.floor((n - 1) / 2);
+    }
+}
+
+let leftDown = function () {
+
+    let current = 0;
+    let root = 0;
+    let n = left.length;
+    while (true) {
+
+        let i = 2 * current + 1; //left child
+        let j = 2 * current + 2; // right child
+
+        if (i < n && left[i] > left[current]) {
+            current = i;
+        }
+        if (j < n && left[j] > left[current]) {
+            current = j;
+        }
+
+        if (current == root) {
+            break;
+        }
+        [left[current], left[root]] = [left[root], left[current]];
+        root = current;
+
+    }
+}
+
+let rightDown = function () {
+    let current = 0;
+    let root = 0;
+    let n = left.length;
+    while (true) {
+
+        let i = 2 * current + 1; //left child
+        let j = 2 * current + 2; // right child
+
+        if (i < n && right[i] < right[current]) {
+            current = i;
+        }
+        if (j < n && right[j] < right[current]) {
+            current = j;
+        }
+        if (current == root) {
+            break;
+        }
+        [right[current], right[root]] = [right[root], right[current]];
+        root = current;
+    }
+}
+
+var MedianFinder = function () {
+    left = [];
+    right = [];
+};
+/** 
+ * @param {number} num
+ * @return {void}
+ */
+MedianFinder.prototype.addNum = function (num) {
+
+    leftPush(num);
+    let e = left[0];
+    left[0] = left[left.length - 1];
+    left.pop();
+    leftDown();
+    rightPush(e);
+    if (right.length > left.length) {
+
+        //console.log(left, right)
+
+        let e = right[0];
+        right[0] = right[right.length - 1];
+        right.pop();
+        rightDown();
+        leftPush(e);
+    }
+};
+
+/**
+ * @return {number}
+ */
+MedianFinder.prototype.findMedian = function () {
+
+    if ((left.length + right.length) % 2 == 0) {
+
+        return (left[0] + right[0]) / 2;
+    }
+    else {
+        return left[0];
+    }
+};
+
+/** 
+ * Your MedianFinder object will be instantiated and called as such:
+ * var obj = new MedianFinder()
+ * obj.addNum(num)
+ * var param_2 = obj.findMedian()
+ */

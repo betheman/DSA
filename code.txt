@@ -15,7 +15,7 @@ Day 5 (Heaps/Greedy/Intervals): Kth Largest Element, Task Scheduler, Car Fleet, 
 Day 6 (Review/Mocks): Mixed set; revisit weak topics.
 Week 3: Graphs, Union-Find, Backtracking, Tries, Matrix BFS
 Day 1 (Graphs BFS/DFS): Number of Islands, Clone Graph, Rotting Oranges, Pacific Atlantic Water Flow.
-Day 2 (Topo/Ordering): Course Schedule, Alien Dictionary, Graph Valid Tree, Redundant Connection, Network Delay Time, Accounts Merge.
+Day 2 (Topo/Ordering): Course Schedule, course-schedule-ii, Alien Dictionary, Graph Valid Tree, Redundant Connection, Network Delay Time, Accounts Merge.
 Day 3 (Union-Find): Graph Valid Tree, Redundant Connection, Accounts Merge, Number of Islands (UF variant).
 Day 4 (Backtracking): Generate Parentheses, Permutations, Subsets, Combination Sum, Word Search (if in your pool), Word Break.
 Day 5 (Trie/Strings): Implement Trie, Add and Search Word, Top K Frequent Words, Encode/Decode Strings.

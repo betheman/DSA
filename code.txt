@@ -2377,3 +2377,307 @@ var orangesRotting = function (grid) {
 };
 
 //console.log(orangesRotting([[1,2]]))
+
+
+//Pacific Atlantic Water Flow
+
+/**
+ * @param {number[][]} heights
+ * @return {number[][]}
+ */
+var pacificAtlantic = function (heights) {
+
+
+    let rows = heights.length;
+    let cols = heights[0].length;
+    let ans = [];
+    let pacific = [];
+    let atlantic = [];
+
+    for (let i = 0; i < rows; i++) {
+
+        pacific.push(new Array(cols).fill(false));
+        atlantic.push(new Array(cols).fill(false));
+    }
+
+    let travel = (row, col, vis, pHeight) => {
+
+        if (row < 0 || col < 0 || row >= rows || col >= cols
+            || vis[row][col] || pHeight > heights[row][col]) {
+            return;
+        }
+        vis[row][col] = true;
+        travel(row + 1, col, vis, heights[row][col]);
+        travel(row - 1, col, vis, heights[row][col]);
+        travel(row, col + 1, vis, heights[row][col]);
+        travel(row, col - 1, vis, heights[row][col]);
+
+
+    }
+
+    for (let i = 0; i < rows; i++) {
+        travel(i, 0, pacific, -Infinity)
+        travel(i, cols - 1, atlantic, -Infinity)
+    }
+
+    for (let i = 0; i < cols; i++) {
+        travel(0, i, pacific, -Infinity)
+        travel(rows - 1, i, atlantic, -Infinity)
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            if (pacific[i][j] && atlantic[i][j]) {
+                ans.push([i, j]);
+            }
+        }
+    }
+    return ans;
+};
+
+
+//Course Schedule 1
+
+/**
+ * @param {number} numCourses
+ * @param {number[][]} prerequisites
+ * @return {boolean}
+ */
+var canFinish = function (numCourses, prerequisites) {
+
+    const g = new Map();
+    const visited = new Array(numCourses).fill(false);
+    const inStack = new Array(numCourses).fill(false);
+
+    for (let [v, u] of prerequisites) {
+
+        if (!g.has(u)) {
+            g.set(u, []);
+        }
+
+        g.get(u).push(v);
+    }
+
+    let dfs = (start) => {
+
+        // if (inStack[start]) {
+        //     return true;
+        // }
+
+        if (visited[start]) {
+            return true;
+        }
+
+
+        visited[start] = true;
+        //inStack[start] = true;
+
+        const nbrs = g.get(start) || [];
+
+        for (const nbr of nbrs) {
+
+            if (dfs(nbr)) {
+                return true;
+            }
+
+        }
+        //inStack[start] = false;
+        return false;
+    }
+
+    for (let i = 0; i < numCourses; i++) {
+        if (!visited[i] && dfs(i)) {
+            return false;
+        }
+    }
+    return true;
+
+};
+
+// Find cycle exists or not.
+
+//Course Schedule 2
+
+
+/**
+ * @param {number} numCourses
+ * @param {number[][]} prerequisites
+ * @return {boolean}
+ */
+var findOrder = function (numCourses, prerequisites) {
+
+    let g = new Map();
+    let ans = [];
+
+    for (let [u, v] of prerequisites) {
+
+        if (!g.has(v)) {
+            g.set(v, []);
+        }
+        g.get(v).push(u);
+    }
+
+    let vis = new Map();
+    let stateMap = new Map();
+
+    let isCycle = (i) => {
+
+        if (stateMap.has(i)) {
+            return true;
+        }
+
+        if (vis.has(i)) {
+            return false;
+        }
+
+        vis.set(i, true);
+        stateMap.set(i, true);
+
+        let nbrs = g.get(i) || [];
+
+        for (let nbr of nbrs) {
+
+            let res = isCycle(nbr);
+            if (res) {
+                return res;
+            }
+        }
+        stateMap.delete(i);
+        ans.push(i);
+        return false;
+    }
+
+    for (let i = 0; i < numCourses; i++) {
+        let res = isCycle(i);
+        if (res) {
+            return [];
+        }
+    }
+    return ans.reverse();
+};
+
+
+//Graph Valid Tree
+
+class Solution {
+    // Function to check whether the given graph is a tree or not.
+    isTree(n, adj) {
+        let edges = [];
+        let map = new Map();
+
+        // collect unique edges
+        for (let i = 0; i < n; i++) {
+            let nbrs = adj[i] || [];
+            for (let nbr of nbrs) {
+                let key1 = `${i}_${nbr}`;
+                let key2 = `${nbr}_${i}`;
+                if (!map.has(key1) && !map.has(key2)) {
+                    map.set(key1, true);
+                    edges.push([i, nbr]);
+                }
+            }
+        }
+
+        // check edge count
+        if (edges.length !== n - 1) return 0;
+
+        let p = new Array(n).fill(0).map((_, i) => i);
+
+        let getParent = (u) => {
+            if (p[u] !== u) p[u] = getParent(p[u]);
+            return p[u];
+        };
+
+        let merge = (u, v) => {
+            let pu = getParent(u);
+            let pv = getParent(v);
+            if (pu === pv) return false; // cycle
+            p[pv] = pu; // ✅ correct union
+            return true;
+        };
+
+        // check for cycles
+        for (let [u, v] of edges) {
+            if (!merge(u, v)) return 0;
+        }
+
+        // ensure connected (only 1 component)
+        let count = 0;
+        for (let i = 0; i < n; i++) {
+            if (p[i] === i) count++;
+        }
+        return count === 1 ? 1 : 0;
+    }
+}
+
+
+
+//Alien Dictionary
+
+class Solution {
+    findOrder(words) {
+        let graph = new Map();
+        let chars = new Set();
+
+        // Collect all characters
+        for (let word of words) {
+            for (let ch of word) {
+                let code = ch.charCodeAt(0) - 'a'.charCodeAt(0);
+                chars.add(code);
+                if (!graph.has(code)) {
+                    graph.set(code, []);
+                }
+            }
+        }
+
+        // Build graph
+        for (let i = 0; i < words.length - 1; i++) {
+            let w1 = words[i];
+            let w2 = words[i + 1];
+            let minLen = Math.min(w1.length, w2.length);
+
+            let j = 0;
+            for (; j < minLen; j++) {
+                if (w1[j] !== w2[j]) {
+                    let u = w1[j].charCodeAt(0) - 'a'.charCodeAt(0);
+                    let v = w2[j].charCodeAt(0) - 'a'.charCodeAt(0);
+                    graph.get(u).push(v);
+                    break;
+                }
+            }
+            // Handle prefix edge case: if all characters matched but first word is longer
+            if (j === minLen && w1.length > w2.length) {
+                return "";
+            }
+        }
+
+        let visited = Array(26).fill(false);
+        let inStack = Array(26).fill(false);
+        let result = [];
+        let hasCycle = false;
+
+        const dfs = (node) => {
+            if (inStack[node]) return false; // Cycle detected
+            if (visited[node]) return true;
+
+            visited[node] = true;
+            inStack[node] = true;
+
+            for (let neighbor of graph.get(node) || []) {
+                if (!dfs(neighbor)) return false;
+            }
+
+            inStack[node] = false;
+            result.push(String.fromCharCode(node + 'a'.charCodeAt(0)));
+            return true;
+        };
+
+        for (let ch of chars) {
+            if (!visited[ch]) {
+                if (!dfs(ch)) return ""; // cycle found, invalid order
+            }
+        }
+
+        return result.reverse().join('');
+    }
+}

@@ -2681,3 +2681,75 @@ class Solution {
         return result.reverse().join('');
     }
 }
+
+
+
+
+//Redundant Connection:
+
+/**
+ * @param {number[][]} edges
+ * @return {number[]}
+ */
+var findRedundantConnection = function (edges) {
+
+    let vertices = new Set();
+    const ans = [];
+
+    for (let [u, v] of edges) {
+
+        vertices.add(u);
+        vertices.add(v);
+
+    }
+
+    let p = new Array(vertices.size + 1).fill(0).map((v, i) => i);
+    let size = new Array(vertices.size + 1).fill(0);
+
+
+
+    let getParent = (u) => {
+
+        if (p[u] != u) {
+
+            p[u] = getParent(p[u]);
+        }
+        return p[u];
+    }
+
+    let merge = (u, v) => {
+
+        let pu = getParent(u);
+        let pv = getParent(v);
+
+        if (pu == pv) {
+            return false;
+        }
+
+        if (size[pu] >= size[pv]) {
+            p[pv] = pu;
+            ++size[pu];
+        }
+        else {
+            p[pu] = p[pv];
+            ++size[pv];
+        }
+
+        return true;
+
+
+    }
+
+    for (let [u, v] of edges) {
+
+        let res = merge(u, v);
+
+        if (!res) {
+
+            ans.push([u, v]);
+        }
+    }
+    return ans[ans.length - 1];
+};
+
+

@@ -2754,7 +2754,7 @@ var findRedundantConnection = function (edges) {
 
 
 
-//Network Delay
+//Network Delay(Djekstra)
 
 /**
  * @param {number[][]} times

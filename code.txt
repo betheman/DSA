@@ -2753,3 +2753,65 @@ var findRedundantConnection = function (edges) {
 };
 
 
+
+//Network Delay
+
+/**
+ * @param {number[][]} times
+ * @param {number} n
+ * @param {number} k
+ * @return {number}
+ */
+var networkDelayTime = function (times, n, k) {
+
+
+    const dis = new Array(n + 1).fill(Infinity);
+    const g = new Map();
+
+    for (let [u, v, w] of times) {
+
+        if (!g.has(u)) {
+
+            g.set(u, []);
+
+        }
+        if (!g.has(v)) {
+            g.set(v, []);
+        }
+        g.get(u).push([v, w]);
+    }
+
+
+    dis[k] = 0;
+
+
+    const queue = [[k, 0]];
+
+    while (queue.length > 0) {
+
+        //queue.sort((a, b) => a - b);
+        let [u, w1] = queue.shift();
+
+        if (w1 > dis[u]) {
+            continue;
+        }
+
+        let adj = g.get(u) || [];
+
+        for (let [v, w2] of adj) {
+
+            let cost = w1 + w2;
+
+            if (dis[v] > cost) {
+                dis[v] = cost;
+                queue.push([v, cost]);
+            }
+        }
+    }
+
+    dis.shift();
+
+
+    return Math.max(...dis) == Infinity ? -1 : Math.max(...dis);
+
+};

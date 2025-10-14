@@ -2815,3 +2815,216 @@ var networkDelayTime = function (times, n, k) {
     return Math.max(...dis) == Infinity ? -1 : Math.max(...dis);
 
 };
+
+
+
+
+//Generate Parentheses,
+
+
+/**
+ * @param {number} n
+ * @return {string[]}
+ */
+var generateParenthesis = function (n) {
+
+
+
+    let ans = [];
+
+    let travel = (s, open, close) => {
+
+        if ((close + open) == 2 * n) {
+            ans.push(s);
+            return;
+        }
+
+        if (open < n) {
+            travel(s + "(", open + 1, close);
+        }
+
+        if (close < open) {
+            travel(s + ")", open, close + 1);
+        }
+
+
+    }
+
+    travel("", 0, 0);
+
+    return ans;
+
+};
+
+
+
+//Permutations
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var permute = function (nums) {
+
+
+    let ans = [];
+    let n = nums.length;
+    let map = new Map();
+
+    const travel = (t) => {
+
+
+        if (t.length == nums.length) {
+            ans.push([...t]);
+        }
+
+        for (let i = 0; i < n; i++) {
+
+            if (map.has(i)) {
+                continue;
+            }
+
+            map.set(i, true);
+            t.push(nums[i]);
+            travel(t);
+            map.delete(i);
+            t.pop();
+        }
+    }
+
+    travel([]);
+
+    return ans;
+
+};
+
+
+//permute(['a', 'b', 'c'])
+
+
+//Subsets
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function (nums) {
+
+    let ans = [];
+
+    let travel = (i, t) => {
+
+        if (i == nums.length) {
+            ans.push([...t]);
+            return;
+        }
+        travel(i + 1, t);
+        t.push(nums[i]);
+        travel(i + 1, t);
+
+        t.pop();
+    }
+    travel(0, []);
+
+    return ans;
+};
+
+
+/**
+ * @param {number[]} candidates
+ * @param {number} target
+ * @return {number[][]}
+ */
+var combinationSum = function (candidates, target) {
+    let ans = [];
+    let map = new Map();
+
+    let travel = (i, t, sum) => {
+
+        if (sum == 0 && !map.has(t.join(','))) {
+            ans.push([...t]);
+            map.set(t.join(','))
+        }
+        if (sum < 0 || i == candidates.length) {
+            return;
+        }
+
+        travel(i + 1, t, sum);
+        t.push(candidates[i]);
+        travel(i, t, sum - candidates[i]);
+        t.pop();
+    }
+
+    travel(0, [], target);
+
+
+    return ans;
+};
+
+//Word Search
+
+/**
+ * @param {character[][]} board
+ * @param {string} word
+ * @return {boolean}
+ */
+var exist = function (board, word) {
+
+    let m = board.length;
+    let n = board[0].length;
+
+    let travel = (i, j, str) => {
+
+
+        if (str == word) {
+            return true;
+        }
+
+        if (str[str.length - 1] != word[str.length - 1]) {
+            return false;
+        }
+
+        let char = board[i][j];
+        board[i][j] = '#';
+
+        let dirs = [
+            [-1, 0],
+            [1, 0],
+            [0, -1],
+            [0, 1]
+        ];
+
+        for (let [dx, dy] of dirs) {
+
+            let x = i + dx;
+            let y = j + dy;
+
+            if (x < 0 || y < 0 || x >= m || y >= n || board[x][y] == '#') {
+                continue;
+            }
+
+            let isMatchFound = travel(x, y, str + board[x][y]);
+            if (isMatchFound) {
+                return isMatchFound;
+            }
+        }
+
+        board[i][j] = char;
+        return false;
+    }
+
+    for (let i = 0; i < m; i++) {
+        for (let j = 0; j < n; j++) {
+
+            let isMatchFound = travel(i, j, board[i][j]);
+            if (isMatchFound) {
+                return isMatchFound;
+            }
+        }
+    }
+
+
+
+
+    return false;
+};

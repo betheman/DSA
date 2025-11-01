@@ -3028,3 +3028,109 @@ var exist = function (board, word) {
 
     return false;
 };
+
+
+// Number of Islands  ==> BFS
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+var numIslands = function (grid) {
+
+    let count = 0;
+    let rows = grid.length;
+    let cols = grid[0].length;
+
+    let travel = (i, j) => {
+
+        let queue = [[i, j]];
+
+        while (queue.length > 0) {
+
+            let n = queue.length;
+
+            for (let k = 0; k < n; k++) {
+
+                let [i, j] = queue.shift();
+
+                if ((i + 1) < rows && grid[i + 1][j] == 1) {
+                    grid[i + 1][j] = 0;
+                    queue.push([i + 1, j]);
+                }
+                if ((i - 1) < 0 && grid[i - 1][j] == 1) {
+                    grid[i - 1][j] = 0;
+                    queue.push([i - 1, j]);
+                }
+                if ((j + 1) < cols && grid[i][j + 1] == 1) {
+                    grid[i][j + 1] = 0;
+                    queue.push([i, j + 1]);
+                }
+                if ((j - 1) < 0 && grid[i][j - 1] == 1) {
+                    grid[i][j - 1] = 0;
+                    queue.push([i, j - 1]);
+                }
+
+
+            }
+        }
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            if (grid[i][j] == 1) {
+                ++count;
+                travel(i, j);
+            }
+        }
+    }
+    return count;
+};
+
+/*
+TC: 
+m*n
+SC:
+m*n for grid
+m*n for stack
+
+
+*/
+
+// Number of Islands.  DFS:
+
+/**
+ * @param {character[][]} grid
+ * @return {number}
+ */
+var numIslands = function (grid) {
+
+    let count = 0;
+    let rows = grid.length;
+    let cols = grid[0].length;
+
+    let travel = (i, j) => {
+
+        if (i >= rows || i < 0 || j >= cols || j < 0 || grid[i][j] == 0) {
+            return
+        }
+
+        grid[i][j] = 0;
+
+        travel(i - 1, j);
+        travel(i + 1, j);
+        travel(i, j + 1);
+        travel(i, j - 1);
+    }
+
+    for (let i = 0; i < rows; i++) {
+        for (let j = 0; j < cols; j++) {
+            if (grid[i][j] == 1) {
+                ++count;
+                travel(i, j);
+            }
+        }
+    }
+    return count;
+};
+
+

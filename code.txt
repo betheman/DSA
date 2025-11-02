@@ -3416,3 +3416,55 @@ class Solution {
     }
 }
 
+
+
+//Climbing Stairs
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function (n) {
+
+    const dp = new Array(n + 1).fill(-1);
+
+    let travel = (n) => {
+
+        if (n == 0) {
+            return 1;
+        }
+        if (n < 0) {
+            return 0;
+        }
+
+        if (dp[n] != -1) {
+            return dp[n];
+        }
+        return dp[n] = (travel(n - 1) + travel(n - 2));
+    }
+
+    return travel(n);
+
+};
+
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var climbStairs = function (n) {
+
+    const dp = new Array(n + 1).fill(-1);
+
+    dp[0] = 1
+
+    for (let i = 1; i <= n; i++) {
+
+        dp[i] = dp[n - 1] + dp[n - 2] || 0;
+
+    }
+
+    return dp[n];
+
+};
+

@@ -3362,3 +3362,57 @@ var topKFrequent = function (words, k) {
 };
 
 
+
+//Encode/Decode Strings
+
+
+// User function Template for javascript
+/**
+ * @param {string[]} strs
+ * @returns {string}
+ */
+
+class Solution {
+    // Function to encode a list of strings to a single string.
+    encode(words) {
+
+        let encodedStr = "";
+
+        for (let word of words) {
+
+            encodedStr += (word.length) + "#" + word;
+
+        }
+        return encodedStr;
+
+
+    }
+
+    // Function to decode a single string to a list of strings.
+    decode(s) {
+        //console.log(s)
+
+        let i = 0;
+        let ans=[];
+
+        while (i<s.length) {
+
+            let j = i;
+            while (s[j] != "#") {
+
+                j++;
+
+            }
+            let len=parseInt(s.substring(i,j));
+            ans.push(s.substring(j+1,j+1+len));
+            i=j+1+len;
+        }
+
+        return ans;
+
+        // 2#ab3#abc
+
+
+    }
+}
+

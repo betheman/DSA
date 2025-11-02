@@ -3308,4 +3308,57 @@ WordDictionary.prototype.search = function (word, node = null) {
  */
 
 
+//Top K Frequent Words
+
+/**
+ * @param {string[]} words
+ * @param {number} k
+ * @return {string[]}
+ */
+var topKFrequent = function (words, k) {
+
+    let map = new Map();
+
+    for (let word of words) {
+
+        if (!map.has(word)) {
+            map.set(word, 0);
+        }
+
+        map.set(word, map.get(word) + 1);
+    }
+
+    let f = new Map();
+    let max = -Infinity;
+
+    for (let word of map.keys()) {
+
+        let frequency = map.get(word);
+        max = Math.max(max, frequency);
+        if (!f.has(frequency)) {
+
+            f.set(frequency, []);
+        }
+
+        f.get(frequency).push(word)
+    }
+
+    let ans = [];
+
+    for (let i = max; i > 0; --i) {
+        let words = f.get(i);
+        if (words) {
+            words.sort();
+            ans.push(...words);
+        }
+        if(ans.length>=k){
+            ans=ans.slice(0,k+1);
+            break;
+        }
+    }
+
+    return ans;
+
+};
+
 

@@ -3612,6 +3612,48 @@ var maxSubArray = function (nums) {
     }
 
     return max;
-
-
 };
+
+
+//Maximum Product Subarray
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxProduct = function (nums) {
+
+
+    let max = -Infinity;
+    let product = 1;
+
+    for (let i = 0; i < nums.length; i++) {
+
+        if (product == 0) {
+            product = nums[i];
+        }
+        else {
+            product *= nums[i];
+        }
+
+        max = Math.max(max, product);
+
+    }
+
+    product = 1;
+
+    for (let i = nums.length - 1; i >= 0; i--) {
+
+        if (product == 0) {
+            product = nums[i];
+        }
+        else {
+            product *= nums[i];
+        }
+
+        max = Math.max(max, product);
+
+    }
+    return max;
+};
+

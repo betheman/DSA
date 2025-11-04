@@ -3586,3 +3586,32 @@ var rob = function (nums) {
     let ans2 = travel(0, nums.slice(1));
     return Math.max(ans1, ans2);
 };
+
+
+
+//Maximum Subarray
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var maxSubArray = function (nums) {
+
+    let sum = 0;
+    let max = -Infinity;
+
+    for (let i = 0; i < nums.length; i++) {
+
+        if (sum < 0) {
+            sum = nums[i];
+        }
+        else {
+            sum += nums[i];
+        }
+        max = Math.max(sum, max);
+    }
+
+    return max;
+
+
+};

@@ -3657,3 +3657,35 @@ var maxProduct = function (nums) {
     return max;
 };
 
+
+//Coin Change
+
+/**
+ * @param {number[]} coins
+ * @param {number} amount
+ * @return {number}
+ */
+var coinChange = function (coins, amount) {
+
+
+    let travel = (i, amount) => {
+
+        if (amount == 0) {
+            return 0;
+        }
+        if (amount < 0 || i < 0) {
+            return Infinity;
+        }
+
+        let count1 = 1 + travel(i, amount - coins[i])
+        let count2 = travel(i - 1, amount);
+
+        return Math.min(count1, count2);
+    }
+
+    let ans = travel(coins.length - 1, amount);
+
+
+    return ans == Infinity ? -1 : ans;
+
+};

@@ -3814,3 +3814,34 @@ var wordBreak = function (s, wordDict) {
 
 };
 
+
+//Unique Paths
+
+/**
+ * @param {number} m
+ * @param {number} n
+ * @return {number}
+ */
+var uniquePaths = function (m, n) {
+
+
+
+    let travel = (i, j) => {
+
+        if (i >= m || j >= n) {
+            return 0;
+        }
+
+        if (i == m - 1 && j == n - 1) {
+            return 1;
+        }
+
+        return (travel(i + 1, j) + travel(i, j + 1));
+
+    }
+
+    return travel(0, 0);
+
+
+};
+

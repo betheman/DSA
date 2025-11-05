@@ -3766,3 +3766,51 @@ var numDecodings = function (s) {
     return travel(s.length - 1);
 };
 
+
+
+//Word Break (DP view),
+
+/**
+ * @param {string} s
+ * @param {string[]} wordDict
+ * @return {boolean}
+ */
+var wordBreak = function (s, wordDict) {
+
+
+    const map = new Map();
+    const dp = new Array(s.length + 1).fill(null);
+
+    for (let word of wordDict) {
+        map.set(word, "");
+    }
+
+
+    const travel = (i) => {
+
+        if (i == s.length) {
+            return true;
+        }
+
+        if (dp[i] != null) {
+            return dp[i];
+        }
+
+        for (let j = i; j < s.length; j++) {
+
+            let word = s.substring(i, j + 1);
+
+            if (map.has(word)) {
+                let ans = travel(j + 1);
+                if (ans) {
+                    return ans;
+                }
+            }
+        }
+        return dp[i] = false;
+    }
+
+    return travel(0);
+
+};
+

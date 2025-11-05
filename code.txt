@@ -3723,3 +3723,46 @@ var change = function (amount, coins) {
     return ans;
 
 };
+
+
+//Decode Ways
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var numDecodings = function (s) {
+
+
+    const map = new Map();
+    const dp = new Array(s.length).fill(-1);
+
+    for (let i = 1; i <= 26; i++) {
+        map.set(`${i}`, "");
+    }
+
+    let travel = (i) => {
+
+        if (i < 0) {
+            return 1;
+        }
+
+        if (dp[i] != -1) {
+            return dp[i];
+        }
+
+        let count1 = 0;
+        let count2 = 0;
+
+        if (s[i] != "0") {
+            count1 = travel(i - 1);
+        }
+
+        if ((i - 1) >= 0 && map.has(`${s[i - 1]}${s[i]}`)) {
+            count2 = travel(i - 2);
+        }
+        return dp[i] = (count1 + count2);
+    }
+    return travel(s.length - 1);
+};
+

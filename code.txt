@@ -3885,3 +3885,52 @@ var lengthOfLIS = function (nums) {
 
 
 
+//Russian Doll Envelopes (if in pool)
+
+
+/**
+ * @param {number[][]} envelopes
+ * @return {number}
+ */
+var maxEnvelopes = function (envelopes) {
+
+
+    envelopes.sort((a, b) => a[0] - b[0]);
+
+    const dp = [];
+
+    for (let i = 0; i < envelopes.length; i++) {
+        dp.push(new Array(envelopes.length).fill(null));
+    }
+
+    let travel = (i, j) => {
+
+        if (i >= envelopes.length) {
+            return 0;
+        }
+
+        if (j !== -1 && dp[i][j] !== null) {
+            return dp[i][j];
+        }
+
+        let count1 = 0;
+        let count2 = 0;
+
+        if (j == -1 || (envelopes[i][0] > envelopes[j][0] && envelopes[i][1] > envelopes[j][1])) {
+            count1 = 1 + travel(i + 1, i);
+        }
+
+        count2 = travel(i + 1, j);
+
+        let ans = Math.max(count1, count2);
+        if (j !== -1)
+            dp[i][j] = ans;
+
+        return ans;
+    }
+    return travel(0, -1);
+
+};
+
+
+

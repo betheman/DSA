@@ -3845,3 +3845,43 @@ var uniquePaths = function (m, n) {
 
 };
 
+
+//Longest Increasing Subsequence
+
+/**
+ * @param {number[]} nums
+ * @return {number}
+ */
+var lengthOfLIS = function (nums) {
+
+    const dp = new Array(nums.length).fill(new Array(nums.length));
+
+
+    let travel = (i, j) => {
+
+        if (i < 0) {
+            return 0;
+        }
+
+        if (dp[i][j]) {
+            return dp[i][j];
+        }
+
+        let count1 = 0;
+        let count2 = 0;
+
+        if (j == -1 || nums[i] < nums[j]) {
+            count1 = 1 + travel(i - 1, i);
+        }
+        count2 = travel(i - 1, j);
+
+        return dp[i][j] = Math.max(count1, count2);
+
+    }
+
+    return travel(nums.length - 1, -1);
+
+};
+
+
+

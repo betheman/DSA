@@ -3933,4 +3933,96 @@ var maxEnvelopes = function (envelopes) {
 };
 
 
+//Partition Equal Subset Sum (if in pool)
+
+/**
+ * @param {number[]} nums
+ * @return {boolean}
+ */
+var canPartition = function (nums) {
+
+    let sum = nums.reduce((pv, cv) => (pv + cv));
+
+    if (sum % 2 != 0) {
+        return false;
+    }
+
+    sum = (sum / 2);
+
+    let dp = [];
+
+    for (let i = 0; i < nums.length; i++) {
+        dp.push(new Array(sum + 1).fill(null));
+    }
+
+
+    let travel = (i, sum) => {
+
+        if (sum == 0) {
+            return true;
+        }
+
+        if (sum < 0 || i >= nums.length) {
+            return false;
+        }
+
+        if (dp[i][sum] !== null) {
+            return dp[i][sum];
+        }
+
+        let res1 = travel(i + 1, sum - nums[i]);
+        if (res1) {
+            return res1;
+        }
+        let res2 = travel(i + 1, sum);
+        return dp[i][sum] = res2;
+
+    }
+
+    return travel(0, sum);
+
+
+};
+
+
+//Path Sum
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} targetSum
+ * @return {boolean}
+ */
+var hasPathSum = function (root, targetSum) {
+
+    let travel = (root, sum) => {
+
+        if (!root) {
+            return false;
+        }
+
+        if (!root.left && !root.right && root.val === sum) {
+            return true;
+        }
+
+        let res = travel(root.left, sum - root.val);
+        if (res) {
+            return res;
+        }
+        res = travel(root.right, sum - root.val);
+        return res;
+
+    }
+    return travel(root, targetSum);
+
+};
+
+
 

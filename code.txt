@@ -4025,4 +4025,49 @@ var hasPathSum = function (root, targetSum) {
 };
 
 
+Kth Smallest in BST
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {number} k
+ * @return {number}
+ */
+var kthSmallest = function (root, k) {
+
+    let count = 0;
+    let ans = -1;
+
+    let travel = (root) => {
+
+        if (!root) {
+            return;
+        }
+
+        travel(root.left);
+
+        ++count;
+
+        if (count == k) {
+            ans = root.val;
+        }
+        if (count >= k) {
+            return;
+        }
+
+
+        travel(root.right);
+    }
+
+    travel(root);
+
+    return ans;
+};
 

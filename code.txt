@@ -4291,3 +4291,105 @@ var buildTree = function (inorder, postorder) {
 
     return travel(0, postorder.length - 1)
 };
+
+
+
+//Serialize/Deserialize
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val) {
+ *     this.val = val;
+ *     this.left = this.right = null;
+ * }
+ */
+
+/**
+ * Encodes a tree to a single string.
+ *
+ * @param {TreeNode} root
+ * @return {string}
+ */
+var serialize = function (root) {
+
+    let preorder = [];
+    let inorder = [];
+    let i = 0;
+    let map = new Map();
+
+    let travel = (root) => {
+
+        if (!root) {
+            return root;
+        }
+
+        if (!map.has(root)) {
+            map.set(root, i++);
+        }
+
+        preorder.push(`${map.get(root)}_${root.val}`);
+        travel(root.left);
+        inorder.push(`${map.get(root)}_${root.val}`);
+        travel(root.right);
+    }
+
+    travel(root);
+
+    let str = preorder.join(",");
+    str = str + "#" + inorder.join(",");
+
+    return str;
+
+};
+
+
+/**
+ * Decodes your encoded data to tree.
+ *
+ * @param {string} data
+ * @return {TreeNode}
+ */
+var deserialize = function (data) {
+
+    if (data == '#') {
+        return null;
+    }
+    data = data.split("#");
+    console.log(data);
+
+    let preorder = data[0].split(",")
+    let inorder = data[1].split(",");
+
+
+    let map = new Map();
+    for (let i = 0; i < inorder.length; i++) {
+        map.set(inorder[i], i);
+    }
+    let preIndex = 0;
+
+    let travel = (left, right) => {
+
+        if (left > right) {
+            return null;
+        }
+
+        let val = Number(preorder[preIndex].split('_')[1]);
+
+        let node = new TreeNode(val);
+        let mid = map.get(preorder[preIndex]);
+        ++preIndex;
+        node.left = travel(left, mid - 1);
+        node.right = travel(mid + 1, right);
+
+
+        return node;
+    }
+
+    return travel(0, preorder.length - 1);
+
+};
+
+/**
+ * Your functions will be called as such:
+ * deserialize(serialize(root));
+ */

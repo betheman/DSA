@@ -4194,6 +4194,100 @@ var buildTree = function (preorder, inorder) {
         return node;
     }
 
-    return travel(0, inorder.length - 1);
 
+
+//Build Tree from Preorder+Postorder
+
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {number[]} preorder
+ * @param {number[]} postorder
+ * @return {TreeNode}
+ */
+var constructFromPrePost = function (preorder, postorder) {
+    if (!preorder.length || !postorder.length) return null;
+
+    const postIndex = new Map();
+    for (let i = 0; i < postorder.length; i++) {
+        postIndex.set(postorder[i], i);
+    }
+
+    let prePointer = 0;
+
+    let travel = (left, right) => {
+
+        if (left > right) {
+            return null;
+        }
+
+        let node = new TreeNode(preorder[prePointer]);
+
+        if (left == right) {
+            return node;
+        }
+
+        let mid = postIndex.get(++prePointer);
+
+        node.left = travel(left, mid);
+        node.right = travel(mid + 1, right - 1);
+
+        return node;
+    }
+
+    travel(0, preorder.length - 1);
+};
+    return travel(0, inorder.length - 1);
+};
+
+
+//Build Tree from Inorder+Postorder
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {number[]} inorder
+ * @param {number[]} postorder
+ * @return {TreeNode}
+ */
+var buildTree = function (inorder, postorder) {
+
+    let map = new Map();
+
+    for (let i = 0; i < inorder.length; i++) {
+        map.set(inorder[i], i);
+    }
+
+    let postorderIndex = postorder.length - 1;
+
+    let travel = (left, right) => {
+
+        if (left > right) {
+            return null;
+        }
+
+        let node = new TreeNode(postorder[postorderIndex]);
+        let mid = map.get(postorder[postorderIndex]);
+        --postorderIndex;
+
+        node.right = travel(mid + 1, right);
+        node.left = travel(left, mid - 1);
+
+        return node;
+    }
+
+    return travel(0, postorder.length - 1)
 };

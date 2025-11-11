@@ -4393,3 +4393,69 @@ var deserialize = function (data) {
  * Your functions will be called as such:
  * deserialize(serialize(root));
  */
+
+
+
+
+//Word Ladder
+
+/**
+ * @param {string} beginWord
+ * @param {string} endWord
+ * @param {string[]} wordList
+ * @return {number}
+ */
+var ladderLength = function (beginWord, endWord, wordList) {
+
+    let ans = Infinity;
+
+    let map = new Map();
+    for (let word of wordList) {
+        map.set(word, "");
+    }
+
+    if (!map.has(endWord)) {
+        return 0;
+    }
+
+    map.delete(beginWord);
+
+    let travel = (count, word) => {
+
+        //console.log(count, word)
+
+        if (count > ans) {
+            return;
+        }
+        if (word.join('') == endWord) {
+            ans = Math.min(ans, count);
+            return;
+        }
+
+        for (let j = 0; j < word.length; j++) {
+
+            for (let i = 0; i < 26; i++) {
+
+                let char = String.fromCharCode('a'.charCodeAt(0) + i);
+                let c = word[j];
+                word[j] = char;
+                let nw = word.join('');
+                if (map.has(nw)) {
+                    map.delete(nw);
+                    travel(count + 1, word);
+                    map.set(nw, "");
+                }
+                word[j] = c;
+
+            }
+        }
+    }
+
+    travel(0, beginWord.split(''), 0);
+
+    return ans == Infinity ? 0 : ans + 1;
+
+
+
+
+};

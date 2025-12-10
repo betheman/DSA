@@ -792,52 +792,38 @@ var checkInclusion = function (s1, s2) {
  * @param {string} p
  * @return {number[]}
  */
-var findAnagrams = function (s2, s1) {
+var findAnagrams = function (s, p) {
+  if (p.length > s.length) return [];
 
-    if (s1.length > s2.length) {
+  const result = [];
+  const pCount = new Array(26).fill(0);
+  const windowCount = new Array(26).fill(0);
 
-        return [];
+  // store frequency of p
+  for (let char of p) {
+    pCount[char.charCodeAt(0) - 97]++;
+  }
+
+  let left = 0;
+
+  // sliding window over s
+  for (let right = 0; right < s.length; right++) {
+    windowCount[s.charCodeAt(right) - 97]++;
+
+    // keep window size same as p
+    if (right - left + 1 > p.length) {
+      windowCount[s.charCodeAt(left) - 97]--;
+      left++;
     }
 
-    let char1 = new Array(26).fill(0);
-    let char2 = new Array(26).fill(0);
-
-    let ans = [];
-
-    let i;
-
-    for (i = 0; i < s1.length; i++) {
-
-
-        let code1 = s1[i].charCodeAt(0) - 97;
-        let code2 = s2[i].charCodeAt(0) - 97;
-        ++char1[code1];
-        ++char2[code2];
+    // compare when window size matches p
+    if (right - left + 1 === p.length &&
+        pCount.toString() === windowCount.toString()) {
+      result.push(left);
     }
+  }
 
-    char1 = char1.join('');
-
-    if (char1 == char2.join('')) {
-        ans.push(0);
-    }
-
-    let j = 0;
-
-    for (i; i < s2.length; i++) {
-
-        let code1 = s2[j].charCodeAt(0) - 97;
-        let code2 = s2[i].charCodeAt(0) - 97;
-        ++char2[code2];
-        --char2[code1];
-        ++j;
-
-        if (char1 == char2.join('')) {
-            ans.push(j);
-        }
-    }
-
-    return ans;
-
+  return result;
 };
 
 

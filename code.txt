@@ -6,6 +6,7 @@ Day 3 (Two Pointers): 3Sum, Container With Most Water, Trapping Rain Water, Back
 Day 4 (Sliding Window I): Longest Substring Without Repeating Characters, Permutation in String, Find All Anagrams in a String, Sliding Window Maximum.
 Day 5 (Sliding Window II): Longest Repeating Character Replacement, Minimum Window Substring, Decode Ways, Sort Colors.
 Day 6 (Review/Mocks): Re‑do misses; 1 mock timed set (4 problems mixed).
+
 Week 2: Linked Lists, Binary Search, Trees (basics), Heaps/Greedy
 Day 1 (Linked List I): Reverse Linked List, Merge Two Sorted Lists, Remove Nth Node From End, Reorder List.
 Day 2 (Linked List II): Add Two Numbers, Linked List Cycle, Linked List Cycle II, Palindrome Linked List, Intersection of Two Linked Lists, Copy List with Random Pointer.
@@ -13,6 +14,7 @@ Day 3 (Binary Search): Binary Search, First Bad Version, Find Peak Element, Sear
 Day 4 (Trees I): Invert Binary Tree, Maximum Depth, Balanced Binary Tree, Diameter of Binary Tree, Binary Tree Level Order Traversal, Right Side View.
 Day 5 (Heaps/Greedy/Intervals): Kth Largest Element, Task Scheduler, Car Fleet, Largest Rectangle in Histogram, Merge K Sorted Lists, Find Median from Data Stream.
 Day 6 (Review/Mocks): Mixed set; revisit weak topics.
+
 Week 3: Graphs, Union-Find, Backtracking, Tries, Matrix BFS
 Day 1 (Graphs BFS/DFS): Number of Islands, Clone Graph, Rotting Oranges, Pacific Atlantic Water Flow.
 Day 2 (Topo/Ordering): Course Schedule, course-schedule-ii, Alien Dictionary, Graph Valid Tree, Redundant Connection, Network Delay Time, Accounts Merge.
@@ -20,6 +22,7 @@ Day 3 (Union-Find): Graph Valid Tree, Redundant Connection, Accounts Merge, Numb
 Day 4 (Backtracking): Generate Parentheses, Permutations, Subsets, Combination Sum, Word Search (if in your pool), Word Break.
 Day 5 (Trie/Strings): Implement Trie, Add and Search Word, Top K Frequent Words, Encode/Decode Strings.
 Day 6 (Review/Mocks): 1 full mock; re‑do 3 hardest.
+
 Week 4: Dynamic Programming, Advanced Trees, Mixed Review
 Day 1 (1D DP): Climbing Stairs, House Robber, House Robber II, Maximum Subarray, Maximum Product Subarray.
 Day 2 (Knapsack/Coins): Coin Change, Coin Change II (if in pool), Decode Ways (DP view), Word Break (DP view), Unique Paths.

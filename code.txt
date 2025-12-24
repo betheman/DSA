@@ -31,6 +31,9 @@ Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest in BST, Validate BS
 Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Median of Two Sorted Arrays, Task Scheduler, Word Ladder.
 Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
 
+Week 5: Graph
+Day 1 (Union-Find): MST(Kruskal==> sort edges, ignore same component)
+
 
 
 

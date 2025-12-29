@@ -27,7 +27,7 @@ Week 4: Dynamic Programming, Advanced Trees, Mixed Review
 Day 1 (1D DP): Climbing Stairs, House Robber, House Robber II, Maximum Subarray, Maximum Product Subarray.
 Day 2 (Knapsack/Coins): Coin Change, Coin Change II (if in pool), Decode Ways (DP view), Word Break (DP view), Unique Paths.
 Day 3 (LIS/Greedy DP): Longest Increasing Subsequence, Russian Doll Envelopes (if in pool), Partition Equal Subset Sum (if in pool).
-Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest in BST, Validate BST, LCA, Build Tree from Preorder+Inorder, Serialize/Deserialize.
+Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest/Largest in BST, Validate BST, LCA, Build Tree from Preorder+Inorder, Serialize/Deserialize.
 Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Median of Two Sorted Arrays, Task Scheduler, Word Ladder.
 Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
 
@@ -4204,40 +4204,30 @@ var buildTree = function (preorder, inorder) {
  * @param {number[]} postorder
  * @return {TreeNode}
  */
-var constructFromPrePost = function (preorder, postorder) {
-    if (!preorder.length || !postorder.length) return null;
+var constructFromPrePost = function (pre, post) {
+  let i = 0, j = 0;
 
-    const postIndex = new Map();
-    for (let i = 0; i < postorder.length; i++) {
-        postIndex.set(postorder[i], i);
+  function build() {
+    const root = new TreeNode(pre[i++]);
+
+    if (root.val !== post[j]) {
+      root.left = build();
+    }
+    if (root.val !== post[j]) {
+      root.right = build();
     }
 
-    let prePointer = 0;
+    j++;
+    return root;
+  }
 
-    let travel = (left, right) => {
-
-        if (left > right) {
-            return null;
-        }
-
-        let node = new TreeNode(preorder[prePointer]);
-
-        if (left == right) {
-            return node;
-        }
-
-        let mid = postIndex.get(++prePointer);
-
-        node.left = travel(left, mid);
-        node.right = travel(mid + 1, right - 1);
-
-        return node;
-    }
-
-    travel(0, preorder.length - 1);
+  return build();
 };
-    return travel(0, inorder.length - 1);
-};
+
+
+
+
+
 
 
 //Build Tree from Inorder+Postorder

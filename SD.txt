@@ -1,1 +1,361 @@
+# URL Shortener – Short Design Document
 
+## 1. Overview
+
+A URL Shortener converts long URLs into short, unique links and redirects users efficiently. The system is **read-heavy**, requires **low latency**, and must **scale horizontally**.
+
+---
+
+## 2. Requirements
+
+### Functional
+
+* Shorten long URLs
+* Redirect short URL → original URL
+* Optional custom alias
+* Optional expiration
+* Track click count (basic analytics)
+
+### Non-Functional
+
+* Low latency (<20 ms redirects)
+* High availability
+* Scalable to millions/billions of URLs
+
+---
+
+## 3. High-Level Architecture
+
+Client → Load Balancer → URL Shortener Service → Cache (Redis) → Database
+
+* Redis for fast lookups
+* Database for durability
+* Queue for async analytics
+
+---
+
+## 4. API Design
+
+### Create Short URL
+
+```
+POST /api/v1/shorten
+```
+
+```json
+{
+  "longUrl": "https://example.com",
+  "customAlias": "myurl",
+  "expireAt": "2026-01-01T00:00:00Z"
+}
+```
+
+### Redirect
+
+```
+GET /{shortCode} → 302 Redirect
+```
+
+---
+
+## 5. Short Code Generation
+
+### Why Base62 Encoding
+
+Base62 uses the following characters:
+
+```
+a–z (26) + A–Z (26) + 0–9 (10) = 62 characters
+```
+
+**Reasons for choosing Base62:**
+
+* **Shorter URLs:** Higher base results in fewer characters for the same numeric ID
+* **URL-safe:** Uses only alphanumeric characters, no encoding required
+* **No collisions:** When combined with a unique ID generator
+* **Easy to implement:** Simple math-based encoding/decoding
+
+**Example:**
+
+```
+Numeric ID: 1,000,000
+Base10  → 1000000 (7 chars)
+Base62  → 4c92    (4 chars)
+```
+
+### Why NOT Base64
+
+Base64 uses the following characters:
+
+```
+A–Z a–z 0–9 + / =
+```
+
+**Problems with Base64:**
+
+* **Not URL-safe:** Contains `+`, `/`, `=` which need URL encoding
+* **Longer URLs:** Padding (`=`) increases length
+* **Messy redirects:** Requires decoding before redirect
+* **Higher processing overhead**
+
+**Example Issue:**
+
+```
+Base64 output: aB+/=
+URL encoded : aB%2B%2F%3D
+```
+
+Because of these issues, Base64 is avoided in URL shorteners.
+
+### ID Generation
+
+* Generate a unique numeric ID (Auto-increment or Snowflake)
+
+* Encode the ID using Base62 to generate the short code
+
+* Generate a unique numeric ID (Auto-increment or Snowflake)
+
+* Encode the ID using Base62 to generate the short code
+
+---
+
+## 6. Data Model
+
+| Field           | Description     |
+| --------------- | --------------- |
+| short_code (PK) | Unique code     |
+| long_url        | Original URL    |
+| expire_at       | Expiration time |
+| click_count     | Number of hits  |
+
+---
+
+## 7. Redirect Flow
+
+1. Request comes with short code
+2. Check Redis cache
+3. If miss → fetch from DB and cache it
+4. Return 302 redirect
+
+---
+
+## 8. Caching Strategy
+
+* Redis key: `short_code`
+* Value: `long_url`
+* TTL based on expiration
+
+---
+
+## 9. Analytics
+
+* Increment click count asynchronously
+* Use Queue (Kafka / PubSub)
+* Avoid blocking redirects
+
+---
+
+## 10. Expiration Handling
+
+* Redis TTL for auto-expiry
+* Periodic DB cleanup job
+
+---
+
+## 11. Scalability & Reliability
+
+* Horizontal service scaling
+* DB sharding by short code
+* CDN for faster global redirects
+
+---
+
+## 12. Summary
+
+A scalable URL Shortener using **Base62 encoding**, **Redis caching**, and **async analytics** to deliver fast, reliable redirects at massive scale.
+
+
+
+
+
+
+
+Rate Limiter Algorithms – Guide
+1️⃣ Fixed Window Rate Limiter
+
+Concept:
+
+Counts requests in fixed time windows (e.g., 1 min)
+
+Resets counter at the start of each window
+
+Example:
+
+Limit: 5 requests/min
+
+Window: 0–60s, 61–120s, …
+
+Time	Request Count	Allowed?
+10s	1	✅
+20s	2	✅
+59s	5	✅
+61s	1 (new window)	✅
+
+Redis Example (Node.js):
+
+const key = `rate_limit:${userId}:${Math.floor(Date.now()/60000)}`;
+const count = await redis.incr(key);
+if (count === 1) await redis.expire(key, 60); // set TTL for window
+return count <= 5;
+
+
+Pros:
+
+Simple, easy to implement
+
+Cons:
+
+Boundary spikes: user can send 5 requests at the end of one window + 5 at the start of next → 10 in ~1s
+
+Use case:
+
+Low-traffic APIs, non-critical limits
+
+2️⃣ Sliding Window Rate Limiter
+
+Concept:
+
+Tracks all requests within last N seconds
+
+Only requests in the current sliding window count
+
+Example:
+
+Limit: 5 requests / 60s
+
+Requests at t = 0, 10, 20, 40, 50 → 6th request at t=55 → blocked
+
+Sliding window moves continuously, no spikes at boundaries
+
+Redis + Node.js Example (ZSET):
+
+const now = Date.now();
+const windowSize = 60000; // 60s
+const limit = 5;
+const key = `rate_limit:${userId}`;
+
+// Remove old requests
+await redis.zremrangebyscore(key, 0, now - windowSize);
+
+// Count current requests
+const count = await redis.zcard(key);
+
+if (count < limit) {
+    await redis.zadd(key, now, now);
+    await redis.pexpire(key, windowSize);
+    return true;
+} else {
+    return false;
+}
+
+
+Pros:
+
+Accurate, prevents spikes at window boundaries
+
+Works well for strict per-user limits
+
+Cons:
+
+Stores timestamps → higher memory usage
+
+More Redis commands → higher latency
+
+Use case:
+
+APIs with strict rate limits, per-user or per-IP
+
+3️⃣ Token Bucket Rate Limiter
+
+Concept:
+
+Bucket has capacity tokens
+
+Tokens refill at a fixed rate
+
+Each request consumes a token
+
+If bucket empty → reject request
+
+Allows bursts while maintaining average rate
+
+Example:
+
+Capacity = 5, Refill = 1 token/sec
+
+Bucket starts full: 5 requests allowed immediately
+
+Further requests wait for refill
+
+Redis + Node.js + Lua (25k tokens/sec example):
+
+-- Lua Script (atomic)
+local key = KEYS[1]
+local capacity = tonumber(ARGV[1])
+local refill_rate = tonumber(ARGV[2])
+local now = tonumber(ARGV[3])
+local cost = tonumber(ARGV[4])
+
+local data = redis.call("HMGET", key, "tokens", "last_refill_ts")
+local tokens = tonumber(data[1]) or capacity
+local last_refill = tonumber(data[2]) or now
+
+local elapsed_ms = now - last_refill
+if elapsed_ms >= 1000 then
+    local refill = math.floor(elapsed_ms / 1000) * refill_rate
+    tokens = math.min(capacity, tokens + refill)
+    last_refill = now
+end
+
+local allowed = 0
+if tokens >= cost then
+    tokens = tokens - cost
+    allowed = 1
+end
+
+redis.call("HMSET", key, "tokens", tokens, "last_refill_ts", last_refill)
+redis.call("EXPIRE", key, 60)
+return allowed
+
+
+Node.js Call:
+
+const allowed = await redis.eval(LUA_SCRIPT, 1, key, 25000, 25000, Date.now(), 1);
+
+
+Pros:
+
+Allows smooth bursts
+
+Good for high-traffic APIs
+
+Atomic with Lua
+
+Cons:
+
+Slightly approximate (fractional refill can allow minor bursts)
+
+Harder to explain than Fixed Window
+
+Use case:
+
+API gateways, high-scale systems, traffic smoothing
+
+Comparison Table
+Feature	Fixed Window	Sliding Window	Token Bucket
+Accuracy	Low	High	Medium
+Burst Handling	❌ No	Limited	✅ Yes
+Memory	Low	High (timestamps)	Very Low
+Complexity	Low	Medium	Medium
+Use Case	Simple limits	Strict per-user/IP	Smooth bursts / high RPS
+Boundary Spikes	Yes	No	No (smooth)

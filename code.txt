@@ -31,8 +31,19 @@ Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest/Largest in BST, Val
 Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Median of Two Sorted Arrays, Task Scheduler, Word Ladder.
 Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
 
-Week 5: Graph
-Day 1 (Union-Find): MST(Kruskal==> sort edges, ignore same component)
+Week 5: Gap Coverage + Final Polish
+Day 1 (Bit Manipulation + Monotonic Stack):
+Single Number, Number of 1 Bits, Counting Bits, Reverse Bits, Daily Temperatures, Next Greater Element I, Next Greater Element II.
+Day 2 (Matrix/Grid + Strings):
+Shortest Path in Binary Matrix, Surrounded Regions, Spiral Matrix, Rotate Image, Group Anagrams, Valid Palindrome II.
+Day 3 (Advanced DP I):
+Edit Distance, Longest Common Subsequence, Longest Palindromic Substring, Palindromic Substrings.
+Day 4 (Advanced DP II + Trees):
+Best Time to Buy and Sell Stock with Cooldown, Same Tree, Subtree of Another Tree, Binary Tree Maximum Path Sum.
+Day 5 (Graphs + Hard Problems):
+Cheapest Flights Within K Stops, Swim in Rising Water, Min Cost to Connect All Points (Prim's/Kruskal's), First Missing Positive.
+Day 6 (Final Mock + Weak Areas):
+2 timed mocks (4 problems each, 2 hours total); revisit 5 hardest problems from entire 5-week plan; update mistakes log.
 
 
 

@@ -1,3 +1,17 @@
+Top 10 System Design Questions (FAANG)
+#	Problem	Core Concept
+1	Design URL Shortener	Hashing, Base62, Cache, DB
+2	Design Rate Limiter	Token Bucket, Sliding Window, Redis
+3	Design Twitter/News Feed	Fan-out, Timeline, Ranking
+4	Design Chat System	WebSocket, Message Queue, Presence
+5	Design Instagram	CDN, Blob Storage, Feed
+6	Design Notification System	Push/Pull, Queue, Throttling
+7	Design YouTube	Video Streaming, CDN, Transcoding
+8	Design Uber	Geospatial Index, Matching
+9	Design Dropbox	File Sync, Chunking, Dedup
+10	Design Distributed Cache	Consistent Hashing, LRU
+
+
 # URL Shortener – Short Design Document
 
 ## 1. Overview

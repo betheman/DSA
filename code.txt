@@ -4447,8 +4447,30 @@ var ladderLength = function (beginWord, endWord, wordList) {
     travel(0, beginWord.split(''), 0);
 
     return ans == Infinity ? 0 : ans + 1;
-
-
-
-
 };
+
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var hammingWeight = function (n) {
+
+    let count = 0;
+
+    while (n > 0) {
+
+        n &= (n - 1);
+        ++count;
+
+    }
+    return count;
+};
+
+// What happens when you subtract 1?
+
+// When you do n - 1:
+
+// The rightmost 1 becomes 0
+
+// All bits after that become 1

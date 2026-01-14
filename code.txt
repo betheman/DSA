@@ -4553,3 +4553,116 @@ var maxProfit = function (prices) {
     return travel(0, 1);
 
 };
+
+
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} p
+ * @param {TreeNode} q
+ * @return {boolean}
+ */
+var isSameTree = function (p, q) {
+
+
+    let dfs = (p, q) => {
+
+        if (p == null && q == null) {
+            return true;
+        }
+        if (p == null || q == null || p.val != q.val) {
+            return false;
+        }
+
+        return dfs(p.left, q.left) && dfs(p.right, q.right);
+
+    }
+
+    return dfs(p, q);
+};
+
+
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @param {TreeNode} subRoot
+ * @return {boolean}
+ */
+var isSubtree = function (root, subRoot) {
+
+    let isSameTree = (p, q) => {
+
+        if (!p && !q) {
+            return true;
+        }
+        if (!p || !q || p.val != q.val) {
+            return false;
+        }
+
+        return (isSameTree(p.left, q.left) && isSameTree(p.right, q.right));
+    }
+
+    let dfs = (p, q) => {
+
+        if (!p) {
+            return false;
+        }
+
+        if (isSameTree(p, q)) {
+            return true;
+        }
+
+        return dfs(p.left, q) || dfs(p.right, q)
+    }
+
+    return dfs(root, subRoot);
+};
+
+
+/**
+ * Definition for a binary tree node.
+ * function TreeNode(val, left, right) {
+ *     this.val = (val===undefined ? 0 : val)
+ *     this.left = (left===undefined ? null : left)
+ *     this.right = (right===undefined ? null : right)
+ * }
+ */
+/**
+ * @param {TreeNode} root
+ * @return {number}
+ */
+var maxPathSum = function (root) {
+
+    let ans = -Infinity;
+
+    let travel = (root) => {
+
+        if (!root) {
+            return 0;
+        }
+
+        let left = Math.max(0, travel(root.left));
+        let right = Math.max(0, travel(root.right));
+
+        ans = Math.max(ans, root.val + left + right);
+
+        return root.val + Math.max(left, right);
+    }
+
+    return travel(root);
+};

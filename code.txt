@@ -41,7 +41,7 @@ Edit Distance, Longest Common Subsequence, Longest Palindromic Substring, Palind
 Day 4 (Advanced DP II + Trees):
 Best Time to Buy and Sell Stock with Cooldown, Same Tree, Subtree of Another Tree, Binary Tree Maximum Path Sum.
 Day 5 (Graphs + Hard Problems):
-Cheapest Flights Within K Stops, Swim in Rising Water, Min Cost to Connect All Points (Prim's/Kruskal's), First Missing Positive.
+Cheapest Flights Within K Stops(Bellman ford), Swim in Rising Water, Min Cost to Connect All Points (Prim's/Kruskal's), First Missing Positive.
 Day 6 (Final Mock + Weak Areas):
 2 timed mocks (4 problems each, 2 hours total); revisit 5 hardest problems from entire 5-week plan; update mistakes log.
 
@@ -2819,7 +2819,6 @@ var networkDelayTime = function (times, n, k) {
 
 };
 
-
 //Network Delay
 
 /**
@@ -2836,18 +2835,21 @@ var networkDelayTime = function (times, n, k) {
 
     for (let i = 1; i < n; i++) {
 
-        
+
         let isUpdated = false;
+        let t = [...dis];
 
         for (let [u, v, w] of times) {
 
             if (dis[u] != Infinity) {
 
-                dis[v] = Math.min(dis[v], dis[u] + w);
+                t[v] = Math.min(t[v], dis[u] + w);
                 isUpdated = true;
             }
         }
-      
+
+        dis=t;
+
 
         if (!isUpdated) {
             break;
@@ -2860,7 +2862,6 @@ var networkDelayTime = function (times, n, k) {
     return max == Infinity ? -1 : max;
 
 };
-
 
 
 //Generate Parentheses,
@@ -4707,3 +4708,48 @@ var maxPathSum = function (root) {
 
     return travel(root);
 };
+
+
+
+//Cheapest Flights Within K Stops
+
+/*
+ * @lc app=leetcode id=787 lang=javascript
+ *
+ * [787] Cheapest Flights Within K Stops
+ */
+
+// @lc code=start
+/**
+ * @param {number} n
+ * @param {number[][]} flights
+ * @param {number} src
+ * @param {number} dst
+ * @param {number} k
+ * @return {number}
+ */
+var findCheapestPrice = function (n, flights, src, dst, k) {
+
+    let dis = new Array(n).fill(Infinity);
+
+    dis[src] = 0;
+
+    for (let i = 1; i <= (k + 1); i++) {
+
+        let t = [...dis];
+
+
+        for (let [u, v, w] of flights) {
+
+            if (dis[u] != Infinity) {
+                t[v] = Math.min(t[v], dis[u] + w);
+            }
+        }
+        dis = t;
+    }
+
+    return dis[dst] == Infinity ? -1 : dis[dst];
+
+};
+
+

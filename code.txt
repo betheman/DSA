@@ -2792,7 +2792,7 @@ var networkDelayTime = function (times, n, k) {
 
     while (queue.length > 0) {
 
-        //queue.sort((a, b) => a - b);
+        queue.sort((a, b) => a - b);
         let [u, w1] = queue.shift();
 
         if (w1 > dis[u]) {
@@ -2819,6 +2819,47 @@ var networkDelayTime = function (times, n, k) {
 
 };
 
+
+//Network Delay
+
+/**
+ * @param {number[][]} times
+ * @param {number} n
+ * @param {number} k
+ * @return {number}
+ */
+var networkDelayTime = function (times, n, k) {
+
+
+    let dis = new Array(n + 1).fill(Infinity);
+    dis[k] = 0;
+
+    for (let i = 1; i < n; i++) {
+
+        
+        let isUpdated = false;
+
+        for (let [u, v, w] of times) {
+
+            if (dis[u] != Infinity) {
+
+                dis[v] = Math.min(dis[v], dis[u] + w);
+                isUpdated = true;
+            }
+        }
+      
+
+        if (!isUpdated) {
+            break;
+        }
+    }
+    dis.shift();
+
+    let max = Math.max(...dis);
+
+    return max == Infinity ? -1 : max;
+
+};
 
 
 

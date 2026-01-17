@@ -4813,3 +4813,78 @@ var swimInWater = function (grid) {
 };
 
 
+//Min Cost to Connect All Points 
+
+/**
+ * @param {number[][]} points
+ * @return {number}
+ */
+var minCostConnectPoints = function (points) {
+
+
+    let edges = [];
+
+    for (let i = 0; i < points.length; i++) {
+
+        let [x1, y1] = points[i];
+
+        for (let j = i + 1; j < points.length; j++) {
+
+            let [x2, y2] = points[j];
+            let dis = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+
+            edges.push([i, j, dis]);
+
+        }
+    }
+
+
+    let parent = new Array(points.length).fill(0).map((v, i) => i);
+    let size = new Array(points.length).fill(0);
+
+    let findP = (i) => {
+
+        if (parent[i] != i) {
+            parent[i] = findP(parent[i]);
+        }
+        return parent[i];
+    }
+
+
+    let merge = (u, v) => {
+
+
+        let pu = findP(u);
+        let pv = findP(v);
+
+
+        if (pu == pv) {
+            return false;
+        }
+
+        if (size[pu] >= size[pv]) {
+            parent[pv] = pu;
+            ++size[pu];
+        }
+        else {
+            parent[pu] = pv;
+            ++size[pv];
+        }
+        return true;
+    }
+
+    edges.sort((a, b) => a[2] - b[2]);
+
+    let cost = 0;
+
+    for (let [u, v, w] of edges) {
+
+        if (merge(u, v)) {
+
+            cost += w;
+        }
+    }
+    return cost;
+};
+
+

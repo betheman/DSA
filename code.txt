@@ -4888,3 +4888,63 @@ var minCostConnectPoints = function (points) {
 };
 
 
+/**
+ * @param {number[][]} points
+ * @return {number}
+ */
+var minCostConnectPoints = function (points) {
+
+    let g = new Map();
+
+    for (let i = 0; i < points.length; i++) {
+
+        let [x1, y1] = points[i];
+
+
+        for (let j = i + 1; j < points.length; j++) {
+
+            let [x2, y2] = points[j];
+            let dis = Math.abs(x1 - x2) + Math.abs(y1 - y2);
+
+            if (!g.has(i)) {
+                g.set(i, []);
+            }
+            if (!g.has(j)) {
+                g.set(j, []);
+            }
+
+            g.get(i).push([j, dis]);
+            g.get(j).push([i, dis])
+
+        }
+    }
+
+    let dis = new Array(points.length).fill(Infinity);
+    let vis = new Array(points.length).fill(false)
+
+    let queue = [[0, 0]];
+    dis[0]=0;
+
+    while (queue.length > 0) {
+
+        queue.sort((a, b) => a[1] - b[1]);
+        let [u, cost] = queue.shift();
+
+        if (vis[u]) {
+            continue;
+        }
+        vis[u] = true;
+
+        for (let [v, w] of g.get(u) || []) {
+
+            if (!vis[v] && dis[v] > w) {
+                dis[v] = w;
+                queue.push([v, w]);
+            }
+        }
+    }
+
+    let sum = dis.reduce((pv, cv) => (pv + cv));
+    return sum;
+};
+

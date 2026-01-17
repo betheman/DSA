@@ -4753,3 +4753,63 @@ var findCheapestPrice = function (n, flights, src, dst, k) {
 };
 
 
+//Swim in Rising Water
+
+/**
+ * @param {number[][]} grid
+ * @return {number}
+ */
+var swimInWater = function (grid) {
+
+
+    let min = Infinity;
+    let n = grid.length;
+
+    let vis = new Array(n).fill(0).map(() => new Array(n).fill(false));
+    let dp = new Array(n).fill(0).map(() => new Array(n).fill(Infinity));
+    let dirs = [
+        [1, 0],
+        [0, 1],
+        [-1, 0],
+        [0, -1]
+    ];
+
+    let travel = (i, j, t) => {
+
+        if (t >= min) {
+            return;
+        }
+
+        if (i == n - 1 && j == n - 1) {
+            min = Math.min(min, t);
+            return
+        }
+
+        if (t >= dp[i][j]) {
+            return;
+        }
+
+        dp[i][j] = t;
+
+        vis[i][j] = true
+
+        for (let [dx, dy] of dirs) {
+
+            let x = i + dx;
+            let y = j + dy;
+
+            if (x < 0 || y < 0 || x >= n || y >= n || vis[x][y]) {
+                continue;
+            }
+
+            travel(x, y, Math.max(t, grid[x][y]))
+        }
+        vis[i][j] = false
+    }
+
+    travel(0, 0, grid[0][0]);
+    return min;
+
+};
+
+

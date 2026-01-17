@@ -4813,7 +4813,7 @@ var swimInWater = function (grid) {
 };
 
 
-//Min Cost to Connect All Points 
+//Min Cost to Connect All Points: krushkal
 
 /**
  * @param {number[][]} points
@@ -4888,6 +4888,8 @@ var minCostConnectPoints = function (points) {
 };
 
 
+//Min Cost to Connect All Points: Prims
+
 /**
  * @param {number[][]} points
  * @return {number}
@@ -4922,8 +4924,9 @@ var minCostConnectPoints = function (points) {
     let dis = new Array(points.length).fill(Infinity);
     let vis = new Array(points.length).fill(false)
 
+    let totalCost = 0;
     let queue = [[0, 0]];
-    dis[0]=0;
+    dis[0] = 0;
 
     while (queue.length > 0) {
 
@@ -4934,6 +4937,7 @@ var minCostConnectPoints = function (points) {
             continue;
         }
         vis[u] = true;
+        totalCost += cost;
 
         for (let [v, w] of g.get(u) || []) {
 
@@ -4944,7 +4948,6 @@ var minCostConnectPoints = function (points) {
         }
     }
 
-    let sum = dis.reduce((pv, cv) => (pv + cv));
-    return sum;
-};
 
+    return totalCost;
+};

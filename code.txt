@@ -45,7 +45,17 @@ Cheapest Flights Within K Stops(Bellman ford), Swim in Rising Water, Min Cost to
 Day 6 (Final Mock + Weak Areas):
 2 timed mocks (4 problems each, 2 hours total); revisit 5 hardest problems from entire 5-week plan; update mistakes log.
 
-
+Week 6: Design Problems, Math, Recursion Mastery + Interview Simulation
+Day 1 (Design/OOP Problems):
+LRU Cache, LFU Cache, Min Stack (O(1) space), Insert Delete GetRandom O(1), Design HashMap, Design Twitter.
+Day 2 (Math & Number Theory):
+Pow(x, n), Sqrt(x), Happy Number, Ugly Number II, Count Primes, Multiply Strings, Integer to Roman, Roman to Integer.
+Day 3 (Advanced Intervals & Heap Patterns):
+Meeting Rooms, Meeting Rooms II, Insert Interval, Minimum Number of Arrows to Burst Balloons, Reorganize String, K Closest Points to Origin, Top K Frequent Elements.
+Day 4 (Recursion Mastery + Divide & Conquer):
+Letter Combinations of a Phone Number, N-Queens, Sudoku Solver, Different Ways to Add Parentheses, Flatten Nested List Iterator, Power Set (iterative vs recursive).
+Day 5 (Commonly Asked Gaps + Hard Strings):
+Valid Parentheses (edge cases), Longest Valid Parentheses, Basic Calculator, Basic Calculator II, Text Justification, Integer to English Words, ZigZag Conversion.
 
 
 /**

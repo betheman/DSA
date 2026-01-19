@@ -5226,3 +5226,64 @@ RandomizedSet.prototype.getRandom = function () {
  * var param_2 = obj.remove(val)
  * var param_3 = obj.getRandom()
  */
+
+
+// Design HashMap
+
+var MyHashMap = function () {
+
+    this.size = 1000;
+    this.map = new Array(1000).fill(0).map(() => []);
+
+};
+
+MyHashMap.prototype.hash = function (key) {
+    return key % this.size;
+};
+
+MyHashMap.prototype.put = function (key, value) {
+
+    let index = this.hash(key);
+    let arr = this.map[index];
+
+    for (let e of arr) {
+
+        if (e[0] == key) {
+            e[1] = value;
+            return;
+        }
+    }
+    arr.push([key, value]);
+
+};
+
+MyHashMap.prototype.get = function (key) {
+
+
+    let index = this.hash(key);
+    let arr = this.map[index];
+
+    for (let e of arr) {
+
+        if (e[0] == key) {
+            return e[1];
+        }
+    }
+    return -1;
+
+};
+
+MyHashMap.prototype.remove = function (key) {
+
+    let index = this.hash(key);
+    let arr = this.map[index];
+
+    for (let i = 0; i < arr.length; i++) {
+
+        if (arr[i][0] == key) {
+            arr.splice(i, 1);
+            return;
+        }
+    }
+
+};

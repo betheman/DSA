@@ -119,31 +119,44 @@ if (count < limit) {
 ```lua
 -- Lua Script (atomic)
 local key = KEYS[1]
-local capacity = tonumber(ARGV[1])
-local refill_rate = tonumber(ARGV[2])
+
+local rate = tonumber(ARGV[1])
+local capacity = tonumber(ARGV[2])
 local now = tonumber(ARGV[3])
-local cost = tonumber(ARGV[4])
+local requested = tonumber(ARGV[4])
 
-local data = redis.call("HMGET", key, "tokens", "last_refill_ts")
-local tokens = tonumber(data[1]) or capacity
-local last_refill = tonumber(data[2]) or now
+local data = redis.call("HMGET", key, "tokens", "ts")
 
-local elapsed_ms = now - last_refill
-if elapsed_ms >= 1000 then
-    local refill = math.floor(elapsed_ms / 1000) * refill_rate
-    tokens = math.min(capacity, tokens + refill)
-    last_refill = now
+local last_tokens = tonumber(data[1])
+local last_refreshed = tonumber(data[2])
+
+if last_tokens == nil then
+    last_tokens = capacity
 end
 
-local allowed = 0
-if tokens >= cost then
-    tokens = tokens - cost
-    allowed = 1
+if last_refreshed == nil then
+    last_refreshed = now
 end
 
-redis.call("HMSET", key, "tokens", tokens, "last_refill_ts", last_refill)
-redis.call("EXPIRE", key, 60)
-return allowed
+local delta = math.max(0, now - last_refreshed)
+local refill = (delta / 1000.0) * rate
+local current_tokens = math.min(capacity, last_tokens + refill)
+
+local allowed = current_tokens >= requested
+
+if allowed then
+    current_tokens = current_tokens - requested
+end
+
+redis.call("HMSET", key, "tokens", current_tokens, "ts", now)
+redis.call("PEXPIRE", key, math.ceil((capacity / rate) * 1000))
+
+if allowed then
+    return 1
+else
+    return 0
+end
+
 ```
 
 ### Node.js Call

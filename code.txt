@@ -5287,3 +5287,55 @@ MyHashMap.prototype.remove = function (key) {
     }
 
 };
+
+
+
+//Sqrt(x)
+
+class Solution {
+    squareRoot(n, p) {
+
+        let ans = 0;
+        let left = 1;
+        let right = n;
+
+        while (left <= right) {
+
+            let mid = Math.floor((left + right) / 2);
+
+            if (mid * mid == n) {
+                return mid;
+            }
+            else if (mid * mid > n) {
+                right = mid - 1;
+            }
+            else {
+                ans = left;
+                left = mid + 1;
+            }
+        }
+        p = 1 / Math.pow(10, p);
+
+        while (((ans + p) * (ans + p)) <= n) {
+            ans = (ans + p)
+        }
+        return ans;
+    }
+
+    sqrtHighPrecision(x) {
+        let left = 0, right = x;
+        const eps = 1e-6;
+
+        while (right - left > eps) {
+            let mid = (left + right) / 2;
+
+            if (mid * mid <= x) {
+                left = mid;
+            } else {
+                right = mid;
+            }
+        }
+
+        return left;
+    }
+} 

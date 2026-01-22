@@ -5339,3 +5339,31 @@ class Solution {
         return left;
     }
 } 
+
+
+//Happy Number,
+
+/**
+ * @param {number} n
+ * @return {boolean}
+ */
+var isHappy = function (n) {
+
+    let set = new Set();
+    let sum = 0;
+
+    while (n != 1 && !set.has(n)) {
+
+        set.add(n);
+
+        while (n > 0) {
+
+            let num = n % 10;
+            sum += (num * num);
+            n /= 10;
+        }
+        n = sum;
+    }
+
+    return n == 1;
+};

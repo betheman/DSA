@@ -5367,3 +5367,136 @@ var isHappy = function (n) {
 
     return n == 1;
 };
+
+
+//Ugly Number II
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+var nthUglyNumber = function (n) {
+
+
+    let dp = new Array(n).fill(Infinity);
+    dp[0] = 1;
+    let i2 = 0;
+    let i3 = 0;
+    let i5 = 0;
+
+    for (let i = 1; i <= n; i++) {
+
+        let num1 = dp[i2] * 2;
+        let num2 = dp[i3] * 3;
+        let num3 = dp[i5] * 5;
+
+        dp[i] = Math.min(num1, num2, num3);
+
+        if (dp[i] == num1) {
+            ++i2;
+        }
+        if (dp[i] == num2) {
+            ++i3;
+        }
+        if (dp[i] == num3) {
+            ++i5;
+        }
+    }
+    //console.log(dp)
+
+    return dp[n - 1];
+
+};
+
+
+/**
+ * @param {number} n
+ * @return {number}
+ */
+// var nthUglyNumber = function (n) {
+
+//     let heap = [1];
+//     let cache = new Set();
+//     cache.add(1);
+
+//     for (let i = 1; i <= n; i++) {
+//         let num = heap.shift();
+
+//         for (let pf of [2, 3, 5]) {
+
+//             let newNum = num * pf;
+
+//             if (!cache.has(newNum)) {
+//                 cache.add(newNum);
+//                 heap.push(newNum);
+//             }
+//         }
+//         heap.sort((a, b) => a - b);
+
+//         if (i == n) {
+//             return num;
+//         }
+//     }
+// };
+
+
+Merge sort:
+
+/**
+ * @param {number[]} nums
+ * @return {number[]}
+ */
+var sortArray = function (nums) {
+
+    let merge = (left, mid, right) => {
+
+        let t = [];
+        let i = left;
+        let j = mid + 1;
+
+        while (i <= mid && j <= right) {
+
+            if (nums[j] >= nums[i]) {
+
+                t.push(nums[i]);
+                ++i;
+            }
+            else {
+                t.push(nums[j]);
+                ++j;
+            }
+        }
+
+        while (i <= mid) {
+            t.push(nums[i]);
+            ++i;
+        }
+
+        while (j <= right) {
+            t.push(nums[j]);
+            ++j;
+        }
+        i = left;
+        for (let k = 0; k < t.length; k++) {
+            nums[i] = t[k];
+            ++i;
+        }
+
+
+    }
+
+    let mergeSort = (left, right) => {
+
+        if (left >= right) {
+            return;
+        }
+        let mid = left + Math.floor((right - left) / 2);
+        mergeSort(left, mid);
+        mergeSort(mid + 1, right);
+        merge(left, mid, right);
+    }
+    mergeSort(0, nums.length - 1);
+
+    return nums;
+};
+

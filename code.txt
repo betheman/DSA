@@ -5624,3 +5624,23 @@ var romanToInt = function (s) {
     return ans
 };
 
+
+//Meeting room
+
+class Solution {
+    canAttend(arr) {
+        arr.sort((a, b) => a[0] - b[0]);
+
+        let endTime = arr[0][1];
+
+        for (let i = 1; i < arr.length; i++) {
+
+            if (endTime > arr[i][0]) {
+                return false;
+            }
+            endTime = arr[i][1];
+        }
+        return true;
+
+    }
+}

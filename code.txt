@@ -5795,3 +5795,69 @@ var reorganizeString = function (s) {
     return ans;
 
 };
+
+
+/**
+ * @param {number[][]} points
+ * @param {number} k
+ * @return {number[][]}
+ */
+var kClosest = function (points, k) {
+
+    const heap = [];
+    const ans = [];
+
+    for (let [x, y] of points) {
+        heap.push([x, y, x * x + y * y]);
+    }
+
+    heap.sort((a, b) => a[2] - b[2]);
+    //console.log(heap)
+
+    while (k > 0) {
+        let [x, y, dis] = heap.shift();
+        ans.push([x, y]);
+        --k;
+    }
+    return ans;
+
+};
+
+
+/**
+ * @param {number[]} nums
+ * @param {number} k
+ * @return {number[]}
+ */
+var topKFrequent = function (nums, k) {
+
+    const freq = new Map();
+    for (let num of nums) {
+
+        if (!freq.has(num)) {
+            freq.set(num, 0);
+        }
+        freq.set(num, freq.get(num) + 1);
+    }
+
+    const buckets = new Array(nums.length + 1).fill(0).map(() => []);
+
+    for (let [val, f] of freq.entries()) {
+        buckets[f].push(val);
+    }
+
+    let ans = [];
+
+    for (let i = nums.length; i >= 0; --i) {
+
+        let bucket = buckets[i];
+        for (let j = 0; j < bucket.length; j++) {
+
+            ans.push(bucket[j]);
+            if (ans.length >= k) {
+                return ans;
+            }
+        }
+    }
+    return ans;
+};

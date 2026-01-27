@@ -5744,3 +5744,54 @@ var findMinArrowShots = function (intervals) {
     //console.log(ans);
     return ans.length;
 };
+
+
+//Reorganize String
+
+/**
+ * @param {string} s
+ * @return {string}
+ */
+var reorganizeString = function (s) {
+
+    const map = new Map();
+    const maxAllowdFreq = Math.ceil(s.length / 2);
+
+    for (let i = 0; i < s.length; i++) {
+
+        if (!map.has(s[i])) {
+            map.set(s[i], 0);
+        }
+        let freq = map.get(s[i]) + 1;
+        if (freq > maxAllowdFreq) {
+            return "";
+        }
+        map.set(s[i], freq);
+    }
+
+    const heap = [...map.entries()];
+    let ans = '';
+    while (heap.length > 1) {
+
+        heap.sort((a, b) => b[1] - a[1]);
+        let char1 = heap.shift();
+        let char2 = heap.shift();
+        ans += char1[0];
+        ans += char2[0];
+
+        char1[1] -= 1;
+        char2[1] -= 1;
+        if (char1[1] > 0) {
+            heap.push(char1);
+        }
+        if (char2[1] > 0) {
+            heap.push(char2);
+        }
+    }
+    if (heap.length == 1) {
+        ans += heap[0][0];
+
+    }
+    return ans;
+
+};

@@ -5644,3 +5644,32 @@ class Solution {
 
     }
 }
+
+
+//Meeting Rooms II
+
+class Solution {
+    minMeetingRooms(start, end) {
+
+        start.sort((a, b) => a - b);
+        end.sort((a, b) => a - b);
+        let ans = 0;
+        let j = 0;
+        let count = 0;
+
+        for (let i = 0; i < start.length;) {
+
+            if (end[j] > start[i]) {
+                ++count;
+                ans = Math.max(ans, count);
+                ++i;
+            }
+            else {
+                ++j;
+                --count;
+            }
+        }
+        return ans;
+
+    }
+}

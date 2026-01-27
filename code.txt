@@ -5716,3 +5716,31 @@ var insert = function (intervals, newInterval) {
     }
     return ans;
 };
+
+//Minimum Number of Arrows to Burst Balloons
+
+/**
+ * @param {number[][]} points
+ * @return {number}
+ */
+var findMinArrowShots = function (intervals) {
+
+    intervals.sort((a, b) => a[0] - b[0]);
+
+    let ans = [];
+    ans.push(intervals[0]);
+
+    for (let i = 1; i < intervals.length; i++) {
+
+        if (ans[ans.length - 1][1] >= intervals[i][0]) {
+            ans[ans.length - 1][0] = Math.max(ans[ans.length - 1][0], intervals[i][0]);
+            ans[ans.length - 1][1] = Math.min(ans[ans.length - 1][1], intervals[i][1]);
+
+        }
+        else {
+            ans.push(intervals[i]);
+        }
+    }
+    //console.log(ans);
+    return ans.length;
+};

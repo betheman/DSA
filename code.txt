@@ -5903,3 +5903,55 @@ var letterCombinations = function (digits) {
 
     return travel(0, "");
 };
+
+
+
+//N-Queens
+
+/**
+ * @param {number} n
+ * @return {string[][]}
+ */
+var solveNQueens = function (n) {
+
+    const ans = [];
+    const board = [];
+
+    const cols = new Set();
+    const left = new Set();
+    const right = new Set();
+
+    for (let i = 0; i < n; i++) {
+        board.push(new Array(n).fill("."));
+    }
+
+
+    let travel = (row) => {
+
+        if (row == n) {
+
+            ans.push(board.map((v, i) => v.join('')));
+            return;
+        }
+        for (let col = 0; col < n; col++) {
+
+            if (cols.has(col) || left.has(row - col) || right.has(row + col)) {
+                continue;
+            }
+
+            cols.add(col);
+            left.add(row - col);
+            right.add(row + col);
+            board[row][col] = 'Q';
+            travel(row + 1);
+            cols.delete(col);
+            left.delete(row - col);
+            right.delete(row + col);
+            board[row][col] = '.';
+        }
+        return ans;
+    }
+
+    return travel(0);
+
+};

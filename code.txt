@@ -4994,7 +4994,7 @@ var firstMissingPositive = function (nums) {
 
 
 
-//LRU Cache
+//LRU Cache using DLL
 
 class Node {
 
@@ -5096,6 +5096,65 @@ LRUCache.prototype.put = function (key, value) {
  * obj.put(key,value)
  */
 
+
+//LRU Cache using Set
+
+/**
+ * @param {number} capacity
+ */
+var LRUCache = function (capacity) {
+    this.capacity = capacity;
+    this.set = new Set();
+    this.cache = new Map();
+};
+
+LRUCache.prototype.add = function (key) {
+    this.set.add(key);
+}
+
+LRUCache.prototype.remove = function (key) {
+    this.set.delete(key);
+}
+
+/** 
+ * @param {number} key
+ * @return {number}
+ */
+LRUCache.prototype.get = function (key) {
+
+    if (this.cache.has(key)) {
+
+        this.remove(key);
+        this.add(key);
+        return this.cache.get(key);
+    }
+    return -1;
+};
+
+/** 
+ * @param {number} key 
+ * @param {number} value
+ * @return {void}
+ */
+LRUCache.prototype.put = function (key, value) {
+
+    if (this.cache.has(key)) {
+        this.remove(key);
+        this.add(key);
+        this.cache.set(key, value);
+        return;
+    }
+
+    if (this.capacity == this.cache.size) {
+
+        let lru = this.set.values().next().value;
+        this.remove(lru);
+        this.cache.delete(lru);
+    }
+
+    this.add(key);
+    this.cache.set(key, value);
+};
 
 
 

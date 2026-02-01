@@ -6088,3 +6088,51 @@ var solveSudoku = function (board) {
     return travel(0, 0);
 
 };
+
+
+//Different Ways to Add Parentheses
+
+/**
+ * @param {string} expression
+ * @return {number[]}
+ */
+var diffWaysToCompute = function (expression) {
+
+    const solve = (expression) => {
+
+        const ans = [];
+
+        for (let i = 0; i < expression.length; i++) {
+
+            let ch = expression[i];
+
+            if (ch == '+' || ch == '-' || ch == '*') {
+
+                let left = solve(expression.substring(0, i))
+                let right = solve(expression.substring(i + 1));
+
+                for (let a of left) {
+                    for (let b of right) {
+
+                        if (ch == '+') {
+                            ans.push(a + b);
+                        }
+                        else if (ch == '-') {
+                            ans.push(a - b);
+                        }
+                        else {
+                            ans.push(a * b);
+                        }
+                    }
+                }
+            }
+        }
+
+        if (ans.length == 0) {
+            ans.push(parseInt(expression));
+        }
+        return ans;
+    }
+    return solve(expression);
+
+};

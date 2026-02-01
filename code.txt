@@ -6267,3 +6267,157 @@ var subsets = function (nums) {
 
     return ans;
 };
+
+
+//Valid Parentheses
+
+/**
+ * @param {string} s
+ * @return {boolean}
+ */
+var isValid = function (s) {
+
+    const stk = [];
+    const map = {
+        ')': '(',
+        '}': '{',
+        ']': '['
+    };
+
+
+    for (let char of s) {
+
+        if (char == '(' || char == '{' || char == '[') {
+            stk.push(char);
+        }
+        else {
+            if (stk.pop() != map[char]) {
+                return false;
+            }
+        }
+    }
+    return stk.length == 0;
+};
+
+
+//Longest Valid Parentheses
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var longestValidParentheses = function (s) {
+
+    let stack = [-1]; // base index
+    let maxLen = 0;
+
+    for (let i = 0; i < s.length; i++) {
+
+        if (s[i] == '(') {
+            stack.push(i);
+        }
+        else {
+
+            let e = stack.pop();
+            if (stack.length == 0) {
+                stack.push(i);
+            }
+            else {
+                maxLen = Math.max(maxLen, i - stack[stack.length - 1])
+            }
+        }
+    }
+    return maxLen;
+
+};
+//((()))
+
+
+//Integer to English Words
+
+/**
+ * @param {number} num
+ * @return {string}
+ */
+var numberToWords = function (num) {
+
+    if (num == 0) {
+        return "Zero";
+    }
+
+    const oneTo19 = [
+        "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten",
+        "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen",
+        "Eighteen", "Nineteen"
+    ];
+    const tens = ["", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety"];
+    const levels = ["", "Thousand", "Million", "Billion"];
+    let ans = "";
+
+
+    const nToWords = (n) => {
+
+        if (n == 0) {
+            return "";
+        }
+        if (n < 20) {
+            return oneTo19[n] + " ";
+        }
+        if (n < 100) {
+            return tens[Math.floor(n / 10)] + " " + nToWords(n % 10);
+        }
+        return oneTo19[Math.floor(n / 100)] + " " + "Hundred" + " " + nToWords(n % 100);
+    }
+    let i = 0;
+
+    while (num > 0) {
+
+        let n = num % 1000;
+
+        if (n > 0) {
+            ans = nToWords(n) + levels[i] + " " + ans;
+        }
+        i++;
+        num = Math.floor(num / 1000);
+
+    }
+
+    return ans.trim();
+
+};
+
+
+//ZigZag Conversion
+
+/**
+ * @param {string} s
+ * @param {number} numRows
+ * @return {string}
+ */
+var convert = function (s, numRows) {
+
+    if (numRows == 1) {
+        return s;
+    }
+
+    const ans = new Array(numRows).fill("");
+    let down = true;
+    let row = 0;
+
+    for (let i = 0; i < s.length; i++) {
+
+        ans[row] += s[i];
+
+        if (row == 0) {
+            down = true;
+        }
+
+        if (row == ans.length - 1) {
+            down = false;
+        }
+
+        row = down ? row + 1 : row - 1;
+    }
+
+    return ans.join("");
+
+};

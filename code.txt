@@ -55,7 +55,7 @@ Meeting Rooms, Meeting Rooms II, Insert Interval, Minimum Number of Arrows to Bu
 Day 4 (Recursion Mastery + Divide & Conquer):
 Merge sort, Letter Combinations of a Phone Number, N-Queens, Sudoku Solver, Different Ways to Add Parentheses, Flatten Nested List Iterator, Power Set (iterative vs recursive).
 Day 5 (Commonly Asked Gaps + Hard Strings):
-Valid Parentheses (edge cases), Longest Valid Parentheses, Basic Calculator, Basic Calculator II, Integer to English Words, ZigZag Conversion.
+Valid Parentheses (edge cases), Longest Valid Parentheses, Integer to English Words, ZigZag Conversion, Basic Calculator, Basic Calculator II.
 
 
 /**

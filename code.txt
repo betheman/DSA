@@ -6136,3 +6136,134 @@ var diffWaysToCompute = function (expression) {
     return solve(expression);
 
 };
+
+
+
+//Flatten Nested List Iterator
+
+/**
+ * // This is the interface that allows for creating nested lists.
+ * // You should not implement it, or speculate about its implementation
+ * function NestedInteger() {
+ *
+ *     Return true if this NestedInteger holds a single integer, rather than a nested list.
+ *     @return {boolean}
+ *     this.isInteger = function() {
+ *         ...
+ *     };
+ *
+ *     Return the single integer that this NestedInteger holds, if it holds a single integer
+ *     Return null if this NestedInteger holds a nested list
+ *     @return {integer}
+ *     this.getInteger = function() {
+ *         ...
+ *     };
+ *
+ *     Return the nested list that this NestedInteger holds, if it holds a nested list
+ *     Return null if this NestedInteger holds a single integer
+ *     @return {NestedInteger[]}
+ *     this.getList = function() {
+ *         ...
+ *     };
+ * };
+ */
+/**
+ * @constructor
+ * @param {NestedInteger[]} nestedList
+ */
+var NestedIterator = function (nestedList) {
+
+    this.list = [];
+    this.index = 0;
+
+    const dfs = (nested) => {
+        for (let ni of nested) {
+            if (ni.isInteger()) {
+                this.list.push(ni.getInteger());
+            } else {
+                dfs(ni.getList());
+            }
+        }
+    };
+    dfs(nestedList);
+};
+
+
+/**
+ * @this NestedIterator
+ * @returns {boolean}
+ */
+NestedIterator.prototype.hasNext = function () {
+
+    if (this.index < this.list.length) {
+        return true;
+    }
+    return false;
+};
+
+/**
+ * @this NestedIterator
+ * @returns {integer}
+ */
+NestedIterator.prototype.next = function () {
+
+    //console.log(this.list)
+
+    return this.list[this.index++];
+
+};
+
+/**
+ * Your NestedIterator will be called like this:
+ * var i = new NestedIterator(nestedList), a = [];
+ * while (i.hasNext()) a.push(i.next());
+*/
+
+
+//Power Set (iterative vs recursive)
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function (nums) {
+
+    let ans = [[]];
+
+    for (let num of nums) {
+
+        let n = ans.length;
+        for (let i = 0; i < n; i++) {
+            ans.push([...ans[i],num]);
+        }
+    }
+
+    return ans;
+};
+
+
+
+/**
+ * @param {number[]} nums
+ * @return {number[][]}
+ */
+var subsets = function (nums) {
+
+    let ans = [];
+
+    let travel = (i, t) => {
+
+        if (i == nums.length) {
+            ans.push([...t]);
+            return;
+        }
+        travel(i + 1, t);
+        t.push(nums[i]);
+        travel(i + 1, t);
+
+        t.pop();
+    }
+    travel(0, []);
+
+    return ans;
+};

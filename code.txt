@@ -6014,3 +6014,77 @@ var solveNQueens = function (n) {
     return travel(0);
 
 };
+
+
+//Sudoku Solver
+
+/**
+ * @param {character[][]} board
+ * @return {void} Do not return anything, modify board in-place instead.
+ */
+var solveSudoku = function (board) {
+
+    let n = board.length;
+    let rows = new Array(n).fill('').map(() => new Set());
+    let cols = new Array(n).fill('').map(() => new Set());
+    let boxes = new Array(n).fill('').map(() => new Set());
+
+    const getBoxIndex = (row, col) => {
+        return Math.floor(row / 3) * 3 + Math.floor(col / 3);
+    }
+
+    for (let i = 0; i < n; i++) {
+        for (let j = 0; j < n; j++) {
+
+            if (board[i][j] != '.') {
+
+                let v = board[i][j];
+                rows[i].add(v);
+                cols[j].add(v);
+                let boxIndex = getBoxIndex(i, j);
+                boxes[boxIndex].add(board[i][j])
+            }
+
+        }
+    }
+
+    const travel = (row, col) => {
+
+        if (row == n) {
+            return true;
+        }
+        if (col == n) {
+            return travel(row + 1, 0);
+        }
+        if (board[row][col] != '.') {
+            return travel(row, col + 1);
+        }
+
+        let boxIndex = getBoxIndex(row, col);
+
+        for (let i = 1; i <= 9; i++) {
+
+            let val = `${i}`;
+
+            if (rows[row].has(val) || cols[col].has(val) || boxes[boxIndex].has(val)) {
+                continue;
+            }
+            rows[row].add(val);
+            cols[col].add(val);
+            boxes[boxIndex].add(val);
+            board[row][col] = val;
+
+            if (travel(row, col + 1)) {
+                return true;
+            }
+            rows[row].delete(val);
+            cols[col].delete(val);
+            boxes[boxIndex].delete(val);
+            board[row][col] = `.`;
+        }
+        return false
+    }
+
+    return travel(0, 0);
+
+};

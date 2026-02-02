@@ -6425,10 +6425,11 @@ var convert = function (s, numRows) {
 
 //LFU Cache
 
+//LFU Cache
+
 class Node {
 
     constructor(key, value) {
-
         this.key = key;
         this.value = value;
         this.frequency = 1;
@@ -6455,14 +6456,16 @@ LFUCache.prototype.add = function (node) {
     }
     this.frequencyMap.get(node.frequency).add(node.key);
 
-    if (this.frequencyMap.get(this.minFrequency).size == 0) {
-        ++this.minFrequency;
-    }
-
 }
 
 LFUCache.prototype.remove = function (node) {
-    this.frequencyMap.get(node.frequency).delete(node.key);
+
+    const set = this.frequencyMap.get(node.frequency);
+    set.delete(node.key);
+
+    if (set.size == 0 && node.frequency == this.minFrequency) {
+        ++this.minFrequency;
+    }
 }
 
 

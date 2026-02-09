@@ -1,5 +1,446 @@
 # Node.js vs Java: Performance Comparison
 
+---
+
+# How Event Loop Works in Node.js
+
+## Simple Analogy: Restaurant with 1 Waiter
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     RESTAURANT (Node.js)                        │
+├─────────────────────────────────────────────────────────────────┤
+│                                                                 │
+│   👨‍🍳 Kitchen (Thread Pool)     👨‍💼 Waiter (Event Loop)           │
+│   ┌─────────────────────┐       ┌─────────────────────┐        │
+│   │ Cook 1: Making soup │       │ Takes orders        │        │
+│   │ Cook 2: Grilling    │       │ Serves ready food   │        │
+│   │ Cook 3: Baking      │       │ Never waits idle    │        │
+│   │ Cook 4: Salad       │       │ Always moving       │        │
+│   └─────────────────────┘       └─────────────────────┘        │
+│                                                                 │
+│   🪑 Tables (Requests)                                          │
+│   Table 1: Waiting for soup                                     │
+│   Table 2: Waiting for steak                                    │
+│   Table 3: Just ordered                                         │
+│   Table 4: Ready to pay                                         │
+│                                                                 │
+└─────────────────────────────────────────────────────────────────┘
+
+Waiter NEVER stands and waits for food.
+Takes order → Goes to next table → Serves when ready → Repeat
+```
+
+---
+
+## Event Loop Phases
+
+```
+   ┌───────────────────────────────┐
+┌─▶│           timers              │  ← setTimeout, setInterval
+│  └─────────────┬─────────────────┘
+│  ┌─────────────▼─────────────────┐
+│  │     pending callbacks         │  ← I/O callbacks deferred
+│  └─────────────┬─────────────────┘
+│  ┌─────────────▼─────────────────┐
+│  │       idle, prepare           │  ← Internal use only
+│  └─────────────┬─────────────────┘
+│  ┌─────────────▼─────────────────┐
+│  │           poll                │  ← Retrieve new I/O events
+│  └─────────────┬─────────────────┘     (most time spent here)
+│  ┌─────────────▼─────────────────┐
+│  │           check               │  ← setImmediate callbacks
+│  └─────────────┬─────────────────┘
+│  ┌─────────────▼─────────────────┐
+│  │      close callbacks          │  ← socket.on('close')
+│  └─────────────┬─────────────────┘
+│                │
+└────────────────┘
+        ↑
+    NEXT TICK & MICROTASKS
+    (process.nextTick, Promises)
+    Run between EVERY phase!
+```
+
+---
+
+## Phase by Phase Explanation
+
+### Complete Code Example: All Phases
+
+```javascript
+const fs = require('fs');
+const net = require('net');
+
+console.log('=== EVENT LOOP PHASES DEMO ===\n');
+
+// ══════════════════════════════════════════════════════════
+// PHASE 1: TIMERS
+// Callbacks from: setTimeout(), setInterval()
+// ══════════════════════════════════════════════════════════
+setTimeout(() => {
+    console.log('1. TIMERS PHASE: setTimeout callback');
+}, 0);
+
+setInterval(() => {
+    console.log('1. TIMERS PHASE: setInterval callback (runs once)');
+}, 0);
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 2: PENDING CALLBACKS (I/O Callbacks)
+// Callbacks from: Some system operations (TCP errors, etc.)
+// ══════════════════════════════════════════════════════════
+// TCP connection error callback runs here
+const socket = net.connect(9999, 'localhost', () => {});
+socket.on('error', () => {
+    console.log('2. PENDING CALLBACKS: TCP error callback');
+});
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 3: IDLE, PREPARE
+// Internal use only - no user callbacks
+// ══════════════════════════════════════════════════════════
+// (No user code runs here)
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 4: POLL
+// Callbacks from: fs, http, database, most I/O operations
+// ══════════════════════════════════════════════════════════
+fs.readFile(__filename, () => {
+    console.log('4. POLL PHASE: fs.readFile callback');
+});
+
+// HTTP server callbacks run in Poll phase
+// const server = http.createServer((req, res) => {
+//     console.log('4. POLL PHASE: HTTP request callback');
+// });
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 5: CHECK
+// Callbacks from: setImmediate()
+// ══════════════════════════════════════════════════════════
+setImmediate(() => {
+    console.log('5. CHECK PHASE: setImmediate callback');
+});
+
+
+// ══════════════════════════════════════════════════════════
+// PHASE 6: CLOSE CALLBACKS
+// Callbacks from: socket.on('close'), server.on('close')
+// ══════════════════════════════════════════════════════════
+const tempSocket = net.connect(80, 'google.com');
+tempSocket.on('close', () => {
+    console.log('6. CLOSE CALLBACKS: socket close callback');
+});
+tempSocket.end();
+
+
+// ══════════════════════════════════════════════════════════
+// MICROTASKS (Run between EVERY phase)
+// Callbacks from: process.nextTick(), Promise.then()
+// ══════════════════════════════════════════════════════════
+process.nextTick(() => {
+    console.log('>> MICROTASK: process.nextTick (highest priority)');
+});
+
+Promise.resolve().then(() => {
+    console.log('>> MICROTASK: Promise.then (after nextTick)');
+});
+
+
+console.log('\n=== SYNCHRONOUS CODE END ===\n');
+```
+
+**Expected Output Order:**
+```
+=== EVENT LOOP PHASES DEMO ===
+
+=== SYNCHRONOUS CODE END ===
+
+>> MICROTASK: process.nextTick (highest priority)
+>> MICROTASK: Promise.then (after nextTick)
+1. TIMERS PHASE: setTimeout callback
+1. TIMERS PHASE: setInterval callback (runs once)
+5. CHECK PHASE: setImmediate callback
+4. POLL PHASE: fs.readFile callback
+2. PENDING CALLBACKS: TCP error callback
+6. CLOSE CALLBACKS: socket close callback
+```
+
+---
+
+### Summary Table: Which Callback Runs Where?
+
+| Order | Phase | Functions | Example |
+|-------|-------|-----------|---------|
+| 1 | **Timers** | `setTimeout()`, `setInterval()` | `setTimeout(() => {}, 1000)` |
+| ↓ | *>> Microtasks* | `nextTick()`, `Promise.then()` | *Runs before next phase* |
+| 2 | **Pending Callbacks** | Some system callbacks | TCP errors, DNS callbacks |
+| ↓ | *>> Microtasks* | `nextTick()`, `Promise.then()` | *Runs before next phase* |
+| 3 | **Idle, Prepare** | Internal only | (No user code) |
+| ↓ | *>> Microtasks* | `nextTick()`, `Promise.then()` | *Runs before next phase* |
+| 4 | **Poll** | `fs.*`, `http.*`, `net.*`, DB | `fs.readFile(cb)` |
+| ↓ | *>> Microtasks* | `nextTick()`, `Promise.then()` | *Runs before next phase* |
+| 5 | **Check** | `setImmediate()` | `setImmediate(() => {})` |
+| ↓ | *>> Microtasks* | `nextTick()`, `Promise.then()` | *Runs before next phase* |
+| 6 | **Close** | `*.on('close')` | `socket.on('close', cb)` |
+| ↓ | *>> Microtasks* | `nextTick()`, `Promise.then()` | *Runs before loop repeats* |
+| 🔄 | **Loop Repeats** | Back to Timers | |
+
+**Key Point:** Microtasks (nextTick + Promises) run **between EVERY phase**, not just once!
+
+---
+
+### 1. Timers Phase
+```javascript
+// setTimeout - runs ONCE after delay
+setTimeout(() => console.log('Timer 1'), 100);
+
+// setInterval - runs REPEATEDLY
+setInterval(() => console.log('Timer 2'), 100);
+
+// Both execute in Timers phase when time >= delay
+```
+
+### 2. Poll Phase (Most Important)
+```javascript
+// This is where Node.js spends most time
+// Waiting for:
+// - Incoming HTTP requests
+// - Database responses
+// - File read completions
+
+// File System
+fs.readFile('file.txt', (err, data) => {
+    console.log('Poll: File read complete');
+});
+
+// HTTP Server
+server.on('request', (req, res) => {
+    console.log('Poll: HTTP request received');
+});
+
+// Database
+db.query('SELECT *', (err, rows) => {
+    console.log('Poll: DB query complete');
+});
+```
+
+### 3. Check Phase
+```javascript
+setImmediate(() => {
+    console.log('Check: setImmediate callback');
+});
+
+// setImmediate vs setTimeout(0)
+// Inside I/O callback: setImmediate ALWAYS runs first
+fs.readFile('file.txt', () => {
+    setTimeout(() => console.log('Timeout'), 0);
+    setImmediate(() => console.log('Immediate')); // Runs FIRST!
+});
+```
+
+### 4. Microtasks (Run Between Every Phase)
+
+**Microtasks** are special callbacks that run **immediately after** the current operation finishes, **before** the event loop moves to the next phase.
+
+#### Two Types of Microtasks
+
+| Type | Code | Priority |
+|------|------|----------|
+| `process.nextTick()` | `process.nextTick(() => {...})` | **Highest** (runs first) |
+| `Promise` | `Promise.resolve().then(() => {...})` | **High** (runs after nextTick) |
+
+#### Example:
+```javascript
+Promise.resolve().then(() => {
+    console.log('Microtask - runs ASAP');
+});
+
+process.nextTick(() => {
+    console.log('nextTick - runs even before Promises');
+});
+```
+
+#### Why "Between Every Phase"?
+
+```
+┌─────────────┐     ┌─────────────┐     ┌─────────────┐
+│   Timers    │ ──▶ │  Microtasks │ ──▶ │    Poll     │
+│   Phase     │     │   Queue     │     │   Phase     │
+└─────────────┘     └─────────────┘     └─────────────┘
+                          ↑
+                    Runs HERE before
+                    moving to next phase
+```
+
+**Before moving to the next phase, Node.js ALWAYS checks:**
+1. Any `process.nextTick()` callbacks? → Run them
+2. Any `Promise` callbacks? → Run them
+3. Then proceed to next phase
+
+#### Real-World Use Case
+
+```javascript
+// Reading file and processing data
+fs.readFile('data.json', (err, data) => {
+    // This runs in Poll phase
+    
+    process.nextTick(() => {
+        // This runs IMMEDIATELY after current callback
+        // Before any other I/O callbacks
+        processData(data);
+    });
+});
+```
+
+> **Microtasks** = VIP callbacks that skip the line and run before anything else in the queue.
+
+---
+
+## Execution Order Example
+
+```javascript
+console.log('1: Start');
+
+setTimeout(() => console.log('2: setTimeout'), 0);
+
+setImmediate(() => console.log('3: setImmediate'));
+
+Promise.resolve().then(() => console.log('4: Promise'));
+
+process.nextTick(() => console.log('5: nextTick'));
+
+console.log('6: End');
+```
+
+**Output:**
+```
+1: Start
+6: End
+5: nextTick      ← nextTick runs first (before microtasks)
+4: Promise       ← Promise microtask
+2: setTimeout    ← Timer phase (or after setImmediate, order varies)
+3: setImmediate  ← Check phase
+```
+
+---
+
+## Visual Flow: HTTP Request
+
+```
+Incoming HTTP Request
+         │
+         ▼
+┌─────────────────────────────────────────────────────────────┐
+│                      EVENT LOOP                              │
+│                                                              │
+│  1. Poll Phase detects new connection                        │
+│         │                                                    │
+│         ▼                                                    │
+│  2. Callback: app.get('/users', handler)                     │
+│         │                                                    │
+│         ▼                                                    │
+│  3. Handler calls: db.query('SELECT * FROM users')           │
+│         │                                                    │
+│         ├──────────────────────────────────────┐             │
+│         │                                      │             │
+│         ▼                                      ▼             │
+│  4. Event loop continues              Thread Pool executes   │
+│     (handles other requests)          database query         │
+│         │                                      │             │
+│         │                                      │             │
+│         │◀─────────── Query complete ──────────┘             │
+│         │                                                    │
+│         ▼                                                    │
+│  5. Callback queued to Poll phase                            │
+│         │                                                    │
+│         ▼                                                    │
+│  6. Callback executes: res.json(results)                     │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+---
+
+## Thread Pool (libuv)
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     NODE.JS PROCESS                          │
+├─────────────────────────────────────────────────────────────┤
+│                                                              │
+│   ┌─────────────────┐      ┌─────────────────────────────┐  │
+│   │   MAIN THREAD   │      │      THREAD POOL (libuv)    │  │
+│   │   (Event Loop)  │      │  ┌─────┐ ┌─────┐ ┌─────┐   │  │
+│   │                 │      │  │  T1 │ │  T2 │ │  T3 │   │  │
+│   │  - JavaScript   │      │  └─────┘ └─────┘ └─────┘   │  │
+│   │  - V8 Engine    │      │  ┌─────┐                    │  │
+│   │  - Callbacks    │◀────▶│  │  T4 │  (Default: 4)     │  │
+│   │                 │      │  └─────┘                    │  │
+│   └─────────────────┘      └─────────────────────────────┘  │
+│                                                              │
+│   Thread Pool handles:                                       │
+│   - fs.readFile, fs.writeFile                               │
+│   - crypto.pbkdf2, crypto.randomBytes                       │
+│   - dns.lookup                                              │
+│   - zlib compression                                        │
+│                                                              │
+└─────────────────────────────────────────────────────────────┘
+```
+
+**Increase thread pool:**
+```javascript
+process.env.UV_THREADPOOL_SIZE = 8; // Default is 4
+```
+
+---
+
+## Blocking vs Non-Blocking
+
+### ❌ Blocking (BAD)
+```javascript
+app.get('/data', (req, res) => {
+    // Blocks event loop for 5 seconds!
+    const start = Date.now();
+    while (Date.now() - start < 5000) {} // CPU busy
+    
+    res.send('Done');
+});
+// ALL other requests wait 5 seconds!
+```
+
+### ✅ Non-Blocking (GOOD)
+```javascript
+app.get('/data', async (req, res) => {
+    // Event loop is FREE during await
+    const data = await db.query('SELECT ...');
+    
+    res.send(data);
+});
+// Other requests processed during await!
+```
+
+---
+
+## Event Loop Key Takeaways
+
+| Concept | Explanation |
+|---------|-------------|
+| **Single-threaded** | Only 1 thread runs JavaScript |
+| **Non-blocking** | I/O operations don't block the thread |
+| **Event-driven** | Callbacks execute when events occur |
+| **Thread pool** | Heavy I/O offloaded to worker threads |
+| **Microtasks** | Promises/nextTick run between phases |
+
+> **Event Loop** = A single thread that continuously checks: "Any callbacks ready? Execute them. Any I/O complete? Queue their callbacks. Repeat forever."
+
+---
+
 ## Overview
 
 | Aspect | Node.js | Java |

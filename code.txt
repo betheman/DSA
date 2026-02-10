@@ -6524,3 +6524,48 @@ LFUCache.prototype.put = function (key, value) {
  * var param_1 = obj.get(key)
  * obj.put(key,value)
  */
+
+
+
+
+// basic-calculator-ii
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+var calculate = function (s) {
+
+    const stack = [];
+    let prevOp = '+';
+    let num = 0;
+
+    for (let i = 0; i < s.length; i++) {
+
+        let ch = s[i];
+
+        if (ch >= '0' && ch <= '9') {
+            num = num * 10 + (ch - '0');
+        }
+
+        if ('+-*/'.includes(ch) || i == s.length - 1) {
+
+            if (prevOp == '+') {
+                stack.push(num)
+            }
+            else if (prevOp == '-') {
+                stack.push(-num)
+            }
+            else if (prevOp == '*') {
+                stack.push(stack.pop() * num)
+            }
+            else {
+                stack.push(Math.trunc(stack.pop() / num));
+            }
+            num = 0;
+            prevOp = ch;
+        }
+    }
+    return stack.reduce((pv, cv) => pv + cv);
+
+};

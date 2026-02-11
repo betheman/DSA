@@ -6569,3 +6569,57 @@ var calculate = function (s) {
     return stack.reduce((pv, cv) => pv + cv);
 
 };
+
+
+//basic Calculator
+
+/**
+ * @param {string} s
+ * @return {number}
+ */
+
+var calculate = function (s) {
+
+    let i = 0;
+
+    let solve = () => {
+
+        const stk = [];
+        let preOp = '+';
+        let num = 0;
+
+        while (i < s.length) {
+
+            let ch = s[i];
+            ++i;
+
+            if (ch >= '0' && ch <= '9') {
+                num = num * 10 + (ch - '0');
+            }
+
+            if (ch == '(') {
+                num = solve(i);
+            }
+
+            if ('+-)'.includes(ch) || i == s.length) {
+
+                if (preOp == '+') {
+                    stk.push(num);
+                }
+                else {
+                    stk.push(-1 * num);
+                }
+
+                if (ch == ')') {
+                    break;
+                }
+
+                preOp = ch;
+                num = 0;
+            }
+        }
+        return stk.reduce((pv, cv) => pv + cv, 0);
+    }
+    return solve();
+
+};

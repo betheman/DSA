@@ -1334,3 +1334,34 @@ flowchart TD
 2. **Cloud Run**: Best for containerized APIs, moderate workloads
 3. **Cloud Run Jobs**: Best for batch processing up to 24 hours
 4. **Kubernetes**: Best for long-running, stateful, large file workloads
+
+
+
+
+1. Streaming (Best for Sequential Processing)
+Instead of loading the entire file into memory, read it as a stream:
+import { Storage } from '@google-cloud/storage';import { createReadStream } from 'stream';import { createInterface } from 'readline';export async function processLargeFile(bucketName: string, fileName: string): Promise<void> {  const storage = new Storage();  const readStream = storage.bucket(bucketName).file(fileName).createReadStream();  const rl = createInterface({ input: readStream, crlfDelay: Infinity });  for await (const line of rl) {    // Process each line without loading entire file in memory    await processLine(line);  }}
+Pros: Simple, low memory footprint
+Cons: Still bound by execution timeout (e.g., 9 min GCF gen1, 60 min gen2, 15 min Lambda)
+2. Chunked Processing with Fan-Out (Best for Parallel Processing)
+Split the file into chunks and process each chunk with a separate function invocation:
+│
+┌─────────────┐     ┌──────────────┐     ┌─────────────────┐│  Trigger     │────▶│  Orchestrator │────▶│  Worker Fn (1)  ││  (file upload)│    │  Cloud Fn     │    │  Chunk 0-1000   │└─────────────┘     │               │    └─────────────────┘                    │               │────▶│  Worker Fn (2)  │                    │               │    │  Chunk 1001-2000 │                    │               │    └─────────────────┘                    │               │────▶│  Worker Fn (N)  │                    └──────────────┘    │  Chunk N...       │                                        └─────────────────┘
+;
+// Orchestrator functionexport async function orchestrator(event: StorageEvent): Promise<void> {  const fileSize = await getFileSize(event.bucket, event.name);  const chunkSize = 10 * 1024 * 1024; // 10MB chunks  const chunks = Math.ceil(fileSize / chunkSize);  const messages = Array.from({ length: chunks }, (_, i) => ({    bucket: event.bucket,    fileName: event.name,    startByte: i * chunkSize,    endByte: Math.min((i + 1) * chunkSize, fileSize),    chunkIndex: i,  }));  // Fan-out via a message queue (Pub/Sub, SQS, etc.)  await Promise.all(messages.map((msg) => publishToQueue(msg)));}// Worker function (triggered by queue message)export async function worker(message: ChunkMessage): Promise<void> {  const stream = storage    .bucket(message.bucket)    .file(message.fileName)    .createReadStream({ start: message.startByte, end: message.endByte });  // Process only this chunk  await processChunk(stream);}
+Pros: Massively parallel, overcomes timeout limits
+Cons: More complex, need to handle aggregation of results
+3. Use a Message Queue as a Buffer
+For line-by-line or record-by-record processing, push each record to a queue:
+File Upload ──▶ Parser Fn ──▶ SQS/Pub-Sub ──▶ Worker Fn (per record)
+export async function parserFunction(event: StorageEvent): Promise<void> {  const stream = storage.bucket(event.bucket).file(event.name).createReadStream();  const rl = createInterface({ input: stream });  const batch: string[] = [];  for await (const line of rl) {    batch.push(line);    if (batch.length >= 100) {      await publishBatch(batch); // Send batch of 100 records to queue      batch.length = 0;    }  }  if (batch.length > 0) {    await publishBatch(batch);  }}
+4. Offload to a Dedicated Service (Best for Very Large Files)
+If your file is gigabytes+, cloud functions may not be the right tool. Consider:
+Approach	When to Use
+Cloud Dataflow / AWS Glue	ETL pipelines, structured data transforms
+Kubernetes Job / Cloud Run Job	No timeout limits, large memory available
+Step Functions / Workflows	Orchestrate multi-step processing with retries
+Batch Processing (AWS Batch / GCP Batch)	Heavy compute, large files
+5. Resumable / Stateful Processing
+Track progress externally (e.g., in a database) so you can resume if the function times out:
+export async function resumableProcessor(event: StorageEvent): Promise<void> {  const progress = await getProgress(event.name); // From DB  const stream = storage    .bucket(event.bucket)    .file(event.name)    .createReadStream({ start: progress.lastByte });  let bytesProcessed = progress.lastByte;  for await (const chunk of stream) {    await processChunk(chunk);    bytesProcessed += chunk.length;    if (isApproachingTimeout()) {      await saveProgress(event.name, bytesProcessed);      await retriggerSelf(event); // Re-invoke this function      return;    }  }  await markComplete(event.name);}

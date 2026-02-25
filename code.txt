@@ -58,6 +58,9 @@ Day 5 (Commonly Asked Gaps + Hard Strings):
 Valid Parentheses (edge cases), Longest Valid Parentheses, Integer to English Words, ZigZag Conversion, Basic Calculator, Basic Calculator II.
 
 
+MISC: sortByBits, check-if-a-string-contains-all-binary-codes-of-size-k
+
+
 /**
 
 Anagram: s2 is angram of s1 if s1 chas jumbled. no addtion, subtraction of chars and lenght of s1 == s2.
@@ -6622,4 +6625,69 @@ var calculate = function (s) {
     }
     return solve();
 
+};
+
+
+/**
+ * @param {number[]} arr
+ * @return {number[]}
+ */
+var sortByBits = function (arr) {
+
+    let map = new Map();
+
+    let count = (num) => {
+
+        let c = 0;
+
+        while (num > 0) {
+            num = (num & (num - 1));
+            ++c;
+        }
+        return c;
+    }
+
+    arr.sort((a, b) => a - b);
+
+    for (let num of arr) {
+
+        let c = count(num);
+
+        if (!map.has(c)) {
+            map.set(c, []);
+        }
+        map.get(c).push(num);
+    }
+
+    let ans = [];
+    let keys = [...map.keys()];
+    keys.sort((a, b) => a - b);
+
+    for (let key of keys) {
+        ans.push(...map.get(key));
+    }
+    return ans;
+
+};
+
+
+/**
+ * @param {string} s
+ * @param {number} k
+ * @return {boolean}
+ */
+var hasAllCodes = function (s, k) {
+
+    let seen = new Set();
+    let n = 1 << k;
+
+    for (let i = 0; i <= s.length - k; i++) {
+
+        seen.add(s.substring(i, i + k));
+
+        if (seen.size == n) {
+            return true;
+        }
+    }
+    return false;
 };

@@ -2,7 +2,7 @@ Study plan + must‑know templates (4 weeks, 6 days/week)
 Week 1: Arrays, Hashing, Two Pointers, Sliding Window, Stack
 Day 1 (Arrays/Hashing): Product of Array Except Self, Longest Consecutive Sequence, Majority Element, Missing Number.
 Day 2 (Intervals + Prefix): Merge Intervals, Non-overlapping Intervals, Merge Sorted Array, Set Matrix Zeroes, Subarray Sum Equals K.
-Day 3 (Two Pointers): 3Sum, Container With Most Water, Trapping Rain Water, Backspace String Compare, Remove K Digits.
+Day 3 (Two Pointers): 3Sum,4Sum, Container With Most Water, Trapping Rain Water, Backspace String Compare, Remove K Digits.
 Day 4 (Sliding Window I): Longest Substring Without Repeating Characters, Permutation in String, Find All Anagrams in a String, Sliding Window Maximum.
 Day 5 (Sliding Window II): Longest Repeating Character Replacement, Minimum Window Substring, Decode Ways, Sort Colors.
 Day 6 (Review/Mocks): Re‑do misses; 1 mock timed set (4 problems mixed).

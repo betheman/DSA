@@ -856,6 +856,45 @@ var findAnagrams = function (s, p) {
   return result;
 };
 
+var findAnagrams = function (s, p) {
+    if (p.length > s.length) return [];
+
+    let char1 = new Array(26).fill(0);
+    let char2 = new Array(26).fill(0);
+    let s1 = p;
+    let s2 = s;
+    let ans = [];
+
+    let i;
+
+    for (i = 0; i < s1.length; i++) {
+
+        ++char1[s1[i].charCodeAt(0) - 97];
+        ++char2[s2[i].charCodeAt(0) - 97];
+    }
+
+    char1 = char1.join('');
+
+    if (char1 == char2.join('')) {
+        ans.push(0);
+    }
+
+    j = 0;
+
+    for (; i < s2.length; i++) {
+
+        --char2[s2[j].charCodeAt(0) - 97];
+        ++char2[s2[i].charCodeAt(0) - 97];
+
+        if (char1 == char2.join('')) {
+            ans.push(i - s1.length + 1);
+        }
+        ++j;
+    }
+    return ans;
+};
+
+
 
 
 /**

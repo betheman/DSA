@@ -27,7 +27,7 @@ Week 4: Dynamic Programming, Advanced Trees, Mixed Review
 Day 1 (1D DP): Climbing Stairs, House Robber, House Robber II, Maximum Subarray, Maximum Product Subarray.
 Day 2 (Knapsack/Coins): Coin Change, Coin Change II (if in pool), Decode Ways (DP view), Word Break (DP view), Unique Paths.
 Day 3 (LIS/Greedy DP): Longest Increasing Subsequence, Russian Doll Envelopes (if in pool), Partition Equal Subset Sum (if in pool).
-Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest/Largest in BST, Validate BST, LCA, Build Tree from Preorder+Inorder,Preorder+Postorder,Postorder+Inorder, Serialize/Deserialize.
+Day 4 (Tree/Graph DP & Construction): Path Sum, Kth Smallest/Largest in BST, Validate BST, LCA, Build Tree from Preorder+Inorder,Preorder+Postorder,Postorder+Inorder, Serialize/Deserialize, is-graph-bipartite.
 Day 5 (Mixed hard review): Minimum Window Substring, Sliding Window Maximum, Median of Two Sorted Arrays, Task Scheduler, Word Ladder.
 Day 6 (Final mock + reflections): 1–2 timed mocks; compile a mistakes log.
 
